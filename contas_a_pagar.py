@@ -1,6 +1,7 @@
-from flask import Flask, jsonify, request, abort 
+from flask import jsonify, request,Blueprint, Flask 
 from flask_sqlalchemy import SQLAlchemy
 
+from utils.validacoes import valida_dados_contas_a_pagar
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/contas_a_pagar'
@@ -13,7 +14,7 @@ class Credor(db.Model):
     endereco = db.Column(db.String(255), nullable=False)
     telefone = db.Column(db.String(20))
     email = db.Column(db.String(100))
-
+    
 class ContaAPagar(db.Model):
     __tablename__ = 'contas_a_pagar'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -25,9 +26,9 @@ class ContaAPagar(db.Model):
     data_pagamento = db.Column(db.Date)
     juros = db.Column(db.Numeric(10, 2))
 
-    credor = db.relationship('Credor', backref='contas')
+    credor = db.relationship('Credor', backref='contas')    
 
-@app.route('/contas' ,methods=['GET'])
+@app.route('/listar', methods=['GET'])
 def listar_contas():
     credores = Credor.query.all()
     response = []
@@ -41,7 +42,7 @@ def listar_contas():
 
 
 @app.route('/conta/<int:id>', methods=['GET'])
-def pegar_conta_por_id(id):
+def selecionar_conta_por_id(id):
     conta = ContaAPagar.query.get(id)
     if conta:
         response = {
@@ -61,10 +62,16 @@ def pegar_conta_por_id(id):
     else:
        return jsonify({"mensagem": "Conta não encontrada"}), 400
 
-@app.route('/adicionar_conta' ,methods=['POST'])
+@app.route('/adicionar' ,methods=['POST'])
 def adicionar_conta():
-    try:
-        dados = request.json
+    if not request.json or 'cnpj' not in request.json or 'data_vencimento' not in request.json or 'valor' not in request.json  or 'juros' not in request.json or  'descricao' not in request.json :
+        return jsonify({"mensagem": "Preencha todos os campos"}), 400
+    try:   
+        dados = request.json  
+        valida_dados_contas_a_pagar(dados)  
+        credor = Credor.query.get(dados['cnpj'])
+        if not credor:
+            return jsonify({"mensagem": "Credor não cadastrado!"}), 400
         nova_conta = ContaAPagar(
             valor=dados['valor'],
             descricao=dados['descricao'],
@@ -88,7 +95,7 @@ def adicionar_conta():
     
     
     
-@app.route('/atualizar_conta/<int:id>' ,methods=['PATCH'])
+@app.route('/atualizar/<int:id>' ,methods=['PATCH'])
 def atualizar_conta(id):
     conta = ContaAPagar.query.get(id)
     if not conta:
@@ -96,7 +103,7 @@ def atualizar_conta(id):
     dados = request.json
     try:       
         if 'valor' not in dados and 'cnpj' not in dados and 'juros' not in dados and 'multa' not in dados and 'data_pagamento' not in dados and 'data_vencimento' not in dados and 'descricao' not in dados: 
-            return jsonify({"mensagem":"Campo incorreto!"})   
+            return jsonify({"mensagem":"Campo incorreto!"}),400   
         if 'valor' in dados:
             conta.valor = dados['valor']
         if 'descricao' in dados:
@@ -120,8 +127,8 @@ def atualizar_conta(id):
         
     
 
-@app.route('/conta/<int:id>', methods=['DELETE'])
-def deletar_conta_por_id(id):
+@app.route('/remove/<int:id>', methods=['DELETE'])
+def deletar_conta(id):
     conta = ContaAPagar.query.get(id)
     if conta:
         try:
@@ -135,11 +142,22 @@ def deletar_conta_por_id(id):
     else:
        return jsonify({"mensagem": "Conta não encontrada"}), 400
 
+
+@app.route('/teste', methods=['POST'])
+def valida_texto():
+    cnpj = request.json['cnpj']
+    credor = Credor.query.get(cnpj)
+    if credor:
+        return jsonify("tem")
+    else:
+        return jsonify("nao tem")
+   # return {"retorno":credor}
+    
 if __name__ == '__main__':
+    # Certifique-se de que o SQLAlchemy está inicializado antes de criar as tabelas
     with app.app_context():
-        db.create_all() # Creates the tables in the database
-app.run(debug=True)
-
-
-
+        db.create_all()
+    app.run(debug=True)
+    
 #TODO - implement validation functions on create and update
+
