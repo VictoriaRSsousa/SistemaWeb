@@ -1,12 +1,13 @@
 from flask import jsonify, request,Blueprint, Flask 
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 from utils.validacoes import valida_dados_contas_a_pagar
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/contas_a_pagar'
 db = SQLAlchemy(app)
-
+CORS(app) 
 class Credor(db.Model):
     __tablename__ = 'credores'
     cnpj = db.Column(db.String(14), primary_key=True)
@@ -28,16 +29,26 @@ class ContaAPagar(db.Model):
 
     credor = db.relationship('Credor', backref='contas')    
 
-@app.route('/listar', methods=['GET'])
+@app.route('/listarConta', methods=['GET'])
 def listar_contas():
-    credores = Credor.query.all()
+    cnpj = request.args.get('cnpj')
+    data_vencimento = request.args.get('data_vencimento')
+
+    credores_query = Credor.query
+
+  
+    if cnpj:
+        credores_query = credores_query.filter(Credor.cnpj == cnpj)
+
+    credores = credores_query.all()
+
     response = []
     for credor in credores:
-        empresa = [{'nome':credor.nome,'cnpj':credor.cnpj}]
-        contas = [{'id':conta.id,'valor': conta.valor, 'descricao': conta.descricao,'data de vencimento':conta.data_vencimento,'data de pagamento':conta.data_pagamento} for conta in credor.contas]
+        empresa = {'nome':credor.nome,'cnpj':credor.cnpj}
+        contas = [{'id':conta.id,'valor': conta.valor, 'descricao': conta.descricao,'data_vencimento':conta.data_vencimento,'data_pagamento':conta.data_pagamento} for conta in credor.contas]
         if len(contas) > 0:
             response.append({'empresa': empresa, 'contas': contas})
-    return {'credores': response}
+    return response
 
 
 
@@ -49,8 +60,8 @@ def selecionar_conta_por_id(id):
             'id':conta.id,
             'valor': conta.valor,
             'descricao': conta.descricao,
-            'data de vencimento': conta.data_vencimento,
-            'data de pagamento':conta.data_pagamento,
+            'data_vencimento': conta.data_vencimento,
+            'data_pagamento':conta.data_pagamento,
             'multa':conta.multa,
             'juros':conta.juros,
             'credor': {
@@ -62,7 +73,7 @@ def selecionar_conta_por_id(id):
     else:
        return jsonify({"mensagem": "Conta não encontrada"}), 400
 
-@app.route('/adicionar' ,methods=['POST'])
+@app.route('/adicionarConta' ,methods=['POST'])
 def adicionar_conta():
     if not request.json or 'cnpj' not in request.json or 'data_vencimento' not in request.json or 'valor' not in request.json  or 'juros' not in request.json or  'descricao' not in request.json :
         return jsonify({"mensagem": "Preencha todos os campos"}), 400
@@ -95,7 +106,7 @@ def adicionar_conta():
     
     
     
-@app.route('/atualizar/<int:id>' ,methods=['PATCH'])
+@app.route('/atualizarConta/<int:id>' ,methods=['PATCH'])
 def atualizar_conta(id):
     conta = ContaAPagar.query.get(id)
     if not conta:
@@ -127,7 +138,7 @@ def atualizar_conta(id):
         
     
 
-@app.route('/remove/<int:id>', methods=['DELETE'])
+@app.route('/removerConta/<int:id>', methods=['DELETE'])
 def deletar_conta(id):
     conta = ContaAPagar.query.get(id)
     if conta:
