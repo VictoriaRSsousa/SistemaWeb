@@ -1,8 +1,8 @@
 <template>
   <div id="homePage">
-    <header id="headerPage">
-      <h1>Bem-vindo ao Sistema de Contas a Pagar</h1>
-    </header>
+    <header class="flex w-full justify-center font-bold text-xl p-5 bg-[#4caf50] text-white items-center">
+      <h1 class="text-3xl">Bem-vindo ao Sistema de Contas a Pagar</h1>
+  </header>
 
     <div id="homeContent">
       <RouterLink to="/listarContas">
@@ -16,12 +16,6 @@
       </RouterLink>
       <RouterLink to="/sobre">
         <button class="navButton">Sobre</button>
-      </RouterLink>
-      <RouterLink to="/listarCredores">
-        <button class="navButton">Credores</button>
-      </RouterLink>
-      <RouterLink to="/atualizarCredor">
-        <button class="navButton">Atualizar Informação de credor</button>
       </RouterLink>
     </div>
   </div>

@@ -7,6 +7,9 @@ import listarContas from '../views/listarContas.vue';
 import listarCredores from '../views/listarCredores.vue';
 import adicionarCredor from '../views/adicionarCredor.vue';
 import atualizarCredor from '../views/atualizarCredor.vue';
+import detalhesConta from '../views/detalhesConta.vue';
+import teste from '../views/teste.vue';
+
 //Rotas ...
 const routes = [
   {
@@ -30,7 +33,7 @@ const routes = [
     name: 'adicionarConta',
   },
   {
-    path: '/atualizarConta',
+    path: '/atualizarConta/:id',
     component: atualizarConta,
     name: 'atualizarConta'
   },
@@ -48,6 +51,16 @@ const routes = [
     path: '/atualizarCredor',
     component: atualizarCredor,
     name: 'atualizarCredor'
+  },
+  {
+    path: '/detalhesConta/:id',
+    component: detalhesConta,
+    name: 'detalhesConta'
+  },
+  {
+    path: '/teste',
+    component: teste,
+    name: 'teste'
   }
 ];
 

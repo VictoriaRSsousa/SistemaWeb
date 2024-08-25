@@ -1,11 +1,11 @@
 <template>
   <div>
-    <header id="headerPage">
-      <h1>Contas a Pagar</h1>
-      <nav>
-        <RouterLink to="/">Voltar</RouterLink>
-      </nav>
-    </header>
+    <header class="flex w-full justify-between p-5 bg-[#4caf50] text-white items-center">
+    <h1 class="font-bold text-3xl">Listar Conta</h1>
+    <nav class="text-xl">
+      <RouterLink to="/">Voltar</RouterLink>
+    </nav>
+  </header>
 
     <div v-for="(contaGrupo, index) in resultado" :key="index" class="conta-grupo">
       <header class="grupo-header">
@@ -17,23 +17,23 @@
         :key="i"
         :class="['conta-box', getStatusClass(conta)]"
       >
-        <RouterLink :to="`/conta/${conta.id}`" class="link-conta">
+        <RouterLink :to="`/detalhesConta/${conta.id}`" class="link-conta">
           <div class="conta-info">
             <p><strong>CNPJ:</strong> {{ conta.cnpj }}</p>
             <p><strong>Descrição:</strong> {{ conta.descricao }}</p>
             <p><strong>Valor:</strong> R$ {{ formatValor(conta.valor) }}</p>
             <p><strong>Vencimento:</strong> {{ formatDate(conta.data_vencimento) }}</p>
-            <p><strong>Multa:</strong> R$ {{ formatValor(conta.multa) }}</p>
-            <p><strong>Juros:</strong> R$ {{ formatValor(conta.juros) }}</p>
+            <!-- <p><strong>Multa:</strong> R$ {{ formatValor(conta.multa) }}</p>
+            <p><strong>Juros:</strong> R$ {{ formatValor(conta.juros) }}</p> -->
             <p><strong>Status:</strong> {{ verificarPagamento(conta.data_pagamento, conta.data_vencimento) }}</p>
           </div>
         </RouterLink>
-        <div class="conta-actions">
+        <!-- <div class="conta-actions">
           <RouterLink :to="`/atualizarConta/${conta.id}`">
             <button class="action-button edit-button">Editar</button>
           </RouterLink>
           <button class="action-button delete-button" @click="deletarConta(conta.id)">Excluir</button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -49,10 +49,10 @@ export default {
   methods: {
     async listarContas() {
       try {
-        const response = await fetch("http://127.0.0.1:5000/listarconta");
+        const response = await fetch("http://127.0.0.1:5000/contas/listar");
         const result = await response.json();
         this.resultado = result;
-      } catch (error) {
+      } catch (error:any) {
         alert("Erro ao listar contas: " + error.message);
       }
     },
@@ -96,12 +96,12 @@ export default {
         if (response.ok) {
           this.resultado = this.resultado.map(grupo => ({
             ...grupo,
-            contas: grupo.contas.filter(conta => conta.id !== id)
+            contas: grupo.contas.filter((conta:any) => conta.id !== id)
           }));
         } else {
           alert("Erro ao deletar conta");
         }
-      } catch (error) {
+      } catch (error:any) {
         alert("Erro ao deletar conta: " + error.message);
       }
     },
