@@ -5,7 +5,7 @@ from flask_cors import CORS
 from utils.validacoes import valida_dados_contas_a_pagar
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/contas_a_pagar'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/contas_a_pagar'
 db = SQLAlchemy(app)
 CORS(app) 
 class Credor(db.Model):
@@ -29,7 +29,7 @@ class ContaAPagar(db.Model):
 
     credor = db.relationship('Credor', backref='contas')    
 
-@app.route('/listarConta', methods=['GET'])
+@app.route('/listarconta', methods=['GET'])
 def listar_contas():
     cnpj = request.args.get('cnpj')
     data_vencimento = request.args.get('data_vencimento')

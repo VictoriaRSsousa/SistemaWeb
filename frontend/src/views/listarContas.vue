@@ -1,25 +1,34 @@
 <template>
-  <header id="headerPage">
-    <h1>Contas a pagar</h1>
-  </header>
-
-  <div v-for="(contaGrupo, index) in resultado" :key="index">
-    <header>
-      <h1>{{ contaGrupo.empresa.nome }}</h1>
+  <div>
+    <header id="headerPage">
+      <h1>Contas a Pagar</h1>
+      <nav>
+        <RouterLink to="/">Voltar</RouterLink>
+      </nav>
     </header>
 
-    <div v-for="(conta, i) in contaGrupo.contas" :key="i" id="box-conta">
+    <div v-for="(contaGrupo, index) in resultado" :key="index" class="conta-grupo">
+      <header class="grupo-header">
+        <h2>{{ contaGrupo.empresa.nome }}</h2>
+      </header>
+
+      <div
+        v-for="(conta, i) in contaGrupo.contas"
+        :key="i"
+        :class="['conta-box', getStatusClass(conta)]"
+      >
         <RouterLink :to="`/conta/${conta.id}`" class="link-conta">
-        <p>Descrição: {{ conta.descricao }}</p>
-        <footer id="footer">
-          <p>Valor: {{ conta.valor }}</p>
-          <p>
-            {{
-              verificarPagamento(conta.data_pagamento, conta.data_vencimento)
-            }}
-          </p>
-        </footer>
-    </RouterLink>
+          <div class="conta-info">
+            <p><strong>CNPJ:</strong> {{ conta.cnpj }}</p>
+            <p><strong>Descrição:</strong> {{ conta.descricao }}</p>
+            <p><strong>Valor:</strong> R$ {{ formatValor(conta.valor) }}</p>
+            <p><strong>Vencimento:</strong> {{ formatDate(conta.data_vencimento) }}</p>
+            <p><strong>Multa:</strong> R$ {{ formatValor(conta.multa) }}</p>
+            <p><strong>Juros:</strong> R$ {{ formatValor(conta.juros) }}</p>
+            <p><strong>Status:</strong> {{ verificarPagamento(conta.data_pagamento, conta.data_vencimento) }}</p>
+          </div>
+        </RouterLink>
+      </div>
     </div>
   </div>
 </template>
@@ -28,38 +37,50 @@
 export default {
   data() {
     return {
-      resultado: [] as any,
+      resultado: [] as any[],
     };
   },
   methods: {
     async listarContas() {
       try {
-        const response = await fetch("http://127.0.0.1:5000/listarConta");
+        const response = await fetch("http://127.0.0.1:5000/listarconta");
         const result = await response.json();
         this.resultado = result;
       } catch (error) {
-        alert(error);
+        alert("Erro ao listar contas: " + error.message);
       }
     },
-    verificarPagamento(dataPagamento: any, dataVencimento: any) {
+    verificarPagamento(dataPagamento: string, dataVencimento: string) {
       const vencimento = new Date(dataVencimento);
       const hoje = new Date();
 
       if (dataPagamento) {
         const pagamento = new Date(dataPagamento);
-
-        if (pagamento > vencimento) {
-          return "Paga com atraso";
-        } else if (pagamento <= vencimento) {
-          return "Paga";
-        }
+        return pagamento > vencimento ? "Paga com atraso" : "Paga";
       } else {
-        if (vencimento > hoje) {
-          return "Em aberto";
-        } else if (hoje > vencimento) {
-          return "Pagamento pendente";
-        }
+        return vencimento > hoje ? "Em aberto" : "Pagamento pendente";
       }
+    },
+    getStatusClass(conta: any) {
+      const status = this.verificarPagamento(conta.data_pagamento, conta.data_vencimento);
+      switch (status) {
+        case "Paga":
+          return "status-paga";
+        case "Paga com atraso":
+          return "status-atrasada";
+        case "Pagamento pendente":
+          return "status-pendente";
+        default:
+          return "status-cancelada";
+      }
+    },
+    formatDate(dateString: string) {
+      const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString('pt-BR', options);
+    },
+    formatValor(valor: any) {
+      const number = parseFloat(valor);
+      return isNaN(number) ? "N/A" : number.toFixed(2);
     },
   },
   mounted() {
@@ -67,29 +88,74 @@ export default {
   },
 };
 </script>
-<style>
+
+<style scoped>
+/* Header e Navbar */
 #headerPage {
   display: flex;
-  width: 100vw;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  padding: 20px;
+  background-color: #4caf50;
+  color: white;
 }
-#descricao {
-  background-color: aquamarine;
-  width: 60vw;
+
+#headerPage nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
 }
-#box-conta {
-  background-color: #e0ffff;
-  padding: 5px 20px;
-  margin-bottom: 8px;
-  width: 60vw;
+
+#headerPage nav a:hover {
+  text-decoration: underline;
 }
-.link-conta{
-    text-decoration: none;
-    color: inherit;
+
+/* Estilizando o grupo de contas */
+.conta-grupo {
+  margin: 20px 0;
 }
-#footer {
+
+/* Estilizando o box de cada conta */
+.conta-box {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Status das contas */
+.status-paga {
+  background-color: #c8e6c9;
+}
+
+.status-atrasada {
+  background-color: #fff9c4;
+}
+
+.status-pendente {
+  background-color: #ffcdd2;
+}
+
+.status-cancelada {
+  background-color: #e0e0e0;
+}
+
+/* Informações da conta */
+.conta-info p {
+  margin: 5px 0;
+}
+
+.link-conta {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* Rodapé do box */
+.conta-footer {
   display: flex;
   justify-content: space-between;
+  margin-top: 10px;
+  font-size: 14px;
 }
 </style>
