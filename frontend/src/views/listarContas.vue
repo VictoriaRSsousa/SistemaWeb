@@ -28,6 +28,12 @@
             <p><strong>Status:</strong> {{ verificarPagamento(conta.data_pagamento, conta.data_vencimento) }}</p>
           </div>
         </RouterLink>
+        <div class="conta-actions">
+          <RouterLink :to="`/atualizarConta/${conta.id}`">
+            <button class="action-button edit-button">Editar</button>
+          </RouterLink>
+          <button class="action-button delete-button" @click="deletarConta(conta.id)">Excluir</button>
+        </div>
       </div>
     </div>
   </div>
@@ -82,6 +88,23 @@ export default {
       const number = parseFloat(valor);
       return isNaN(number) ? "N/A" : number.toFixed(2);
     },
+    async deletarConta(id: number) {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/removerConta/${id}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          this.resultado = this.resultado.map(grupo => ({
+            ...grupo,
+            contas: grupo.contas.filter(conta => conta.id !== id)
+          }));
+        } else {
+          alert("Erro ao deletar conta");
+        }
+      } catch (error) {
+        alert("Erro ao deletar conta: " + error.message);
+      }
+    },
   },
   mounted() {
     this.listarContas();
@@ -113,6 +136,10 @@ export default {
 /* Estilizando o grupo de contas */
 .conta-grupo {
   margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
 }
 
 /* Estilizando o box de cada conta */
@@ -121,6 +148,9 @@ export default {
   margin-bottom: 10px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Status das contas */
@@ -148,14 +178,39 @@ export default {
 .link-conta {
   text-decoration: none;
   color: inherit;
-  display: block;
+  flex: 1;
 }
 
-/* Rodapé do box */
-.conta-footer {
+/* Ações da conta */
+.conta-actions {
   display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+  gap: 10px;
+}
+
+.action-button {
+  padding: 8px 15px;
   font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-button {
+  background-color: #1976d2;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #1565c0;
+}
+
+.delete-button {
+  background-color: #e53935;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
 }
 </style>
+

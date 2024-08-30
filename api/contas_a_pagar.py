@@ -154,15 +154,15 @@ def deletar_conta(id):
        return jsonify({"mensagem": "Conta não encontrada"}), 400
 
 
-@app.route('/teste', methods=['POST'])
-def valida_texto():
-    cnpj = request.json['cnpj']
-    credor = Credor.query.get(cnpj)
-    if credor:
-        return jsonify("tem")
-    else:
-        return jsonify("nao tem")
-   # return {"retorno":credor}
+# @app.route('/teste', methods=['POST'])
+# def valida_texto():
+#     cnpj = request.json['cnpj']
+#     credor = Credor.query.get(cnpj)
+#     if credor:
+#         return jsonify("tem")
+#     else:
+#         return jsonify("nao tem")
+#    # return {"retorno":credor}
     
 if __name__ == '__main__':
     # Certifique-se de que o SQLAlchemy está inicializado antes de criar as tabelas
