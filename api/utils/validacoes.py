@@ -1,5 +1,6 @@
 from flask import  jsonify
 from datetime import datetime 
+import re
 
 ##validação de cnpj
 def valida_cnpj(cnpj):
@@ -65,6 +66,60 @@ def valida_dados_contas_a_pagar(dados):
 
     erro = valida_juros(dados.get('juros'))
     if erro: erros.append(erro)
+
+    if erros:
+        return jsonify({"Erros": erros})
+
+    return jsonify({"Mensagem": "Dados válidos!"})
+
+
+def valida_nome(nome):
+    if not isinstance(nome, str) or len(nome) < 3:
+        return {"Mensagem": "Nome inválido! Deve conter pelo menos 3 caracteres."}
+    
+    
+    if not re.match(r'^[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$', nome):
+        return {"Mensagem": "Nome inválido! Deve conter apenas letras e espaços."}
+    
+    return None
+
+def valida_email(email):
+
+    regex = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    
+    if not isinstance(email, str) or not re.match(regex, email):
+        return {"Mensagem": "E-mail inválido!"}
+    
+    return None
+
+def valida_endereco(endereco):
+    if not (isinstance(endereco, str) and len(endereco) > 0):
+        return {"Mensagem": "endereco inválido!"}
+    return None
+
+def valida_telefone(telefone):
+    if not (isinstance(telefone, (str)) and len (telefone) < 8 and telefone.isdigit()):
+        return {"Mensagem": "Telefone inválido!"}
+    return None
+
+def valida_dados_credor(dados):
+    erros=[]
+    
+    erro = valida_cnpj(dados.get('cnpj'))
+    if erro: erros.append(erro)
+
+    erro = valida_nome(dados.get('nome'))
+    if erro: erros.append(erro)
+
+    erro = valida_endereco(dados.get('endereco'))
+    if erro: erros.append(erro)
+
+    erro = valida_telefone(dados.get('telefone'))
+    if erro: erros.append(erro)
+
+    erro = valida_email(dados.get('email'))
+    if erro: erros.append(erro)
+
 
     if erros:
         return jsonify({"Erros": erros})
