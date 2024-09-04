@@ -5,7 +5,7 @@ from flask_cors import CORS
 from utils.validacoes import valida_dados_contas_a_pagar
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/contas_a_pagar'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/contas_a_pagar'
 db = SQLAlchemy(app)
 CORS(app) 
 class Credor(db.Model):
@@ -29,7 +29,7 @@ class ContaAPagar(db.Model):
 
     credor = db.relationship('Credor', backref='contas')    
 
-@app.route('/listarconta', methods=['GET'])
+@app.route('/listarConta', methods=['GET'])
 def listar_contas():
     cnpj = request.args.get('cnpj')
     data_vencimento = request.args.get('data_vencimento')
@@ -154,15 +154,15 @@ def deletar_conta(id):
        return jsonify({"mensagem": "Conta não encontrada"}), 400
 
 
-# @app.route('/teste', methods=['POST'])
-# def valida_texto():
-#     cnpj = request.json['cnpj']
-#     credor = Credor.query.get(cnpj)
-#     if credor:
-#         return jsonify("tem")
-#     else:
-#         return jsonify("nao tem")
-#    # return {"retorno":credor}
+@app.route('/teste', methods=['POST'])
+def valida_texto():
+    cnpj = request.json['cnpj']
+    credor = Credor.query.get(cnpj)
+    if credor:
+        return jsonify("tem")
+    else:
+        return jsonify("nao tem")
+   # return {"retorno":credor}
     
 if __name__ == '__main__':
     # Certifique-se de que o SQLAlchemy está inicializado antes de criar as tabelas

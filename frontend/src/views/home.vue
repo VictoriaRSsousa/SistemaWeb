@@ -17,6 +17,12 @@
       <RouterLink to="/sobre">
         <button class="navButton">Sobre</button>
       </RouterLink>
+      <RouterLink to="/listarCredores">
+        <button class="navButton">Credores</button>
+      </RouterLink>
+      <RouterLink to="/atualizarCredor">
+        <button class="navButton">Atualizar Informação de credor</button>
+      </RouterLink>
     </div>
   </div>
 </template>
