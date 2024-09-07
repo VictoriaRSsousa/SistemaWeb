@@ -1,8 +1,8 @@
 <template>
   <div id="homePage">
-    <header id="headerPage">
-      <h1>Bem-vindo ao Sistema de Contas a Pagar</h1>
-    </header>
+    <header class="flex w-full justify-center font-bold text-xl p-5 bg-[#4caf50] text-white items-center">
+      <h1 class="text-3xl">Bem-vindo ao Sistema de Contas a Pagar</h1>
+  </header>
 
     <div id="homeContent">
       <RouterLink to="/listarContas">

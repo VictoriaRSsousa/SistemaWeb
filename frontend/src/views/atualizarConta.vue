@@ -1,8 +1,8 @@
 <template>
     <div id="editPage">
-      <header id="headerPage">
-        <h1>Editar Conta</h1>
-        <nav>
+      <header id="headerPage" class="mb-7">
+        <h1 class="font-bold text-3xl">Editar Conta</h1>
+        <nav class="text-xl">
           <RouterLink to="/listarContas">Voltar</RouterLink>
         </nav>
       </header>
@@ -17,7 +17,6 @@
           <label for="valor">Valor:</label>
           <input type="number" id="valor" v-model="conta.valor" step="0.01" required />
         </div>
-  
         <div class="form-group">
           <label for="data_vencimento">Data de Vencimento:</label>
           <input type="date" id="data_vencimento" v-model="conta.data_vencimento" required />
@@ -41,63 +40,84 @@
   </template>
   
   <script lang="ts">
-  import { defineComponent, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   
-  export default defineComponent({
+  export default{
     name: 'EditarConta',
-    setup() {
-      const route = useRoute();
-      const router = useRouter();
-      const conta = ref({
-        descricao: '',
-        valor: 0,
-        data_vencimento: '',
-        multa: 0,
-        juros: 0,
-      });
-  
-      const fetchConta = async () => {
-        try {
-          const response = await fetch(`http://127.0.0.1:5000/conta/${route.params.id}`);
-          const data = await response.json();
-          if (data.Conta) {
-            conta.value = data.Conta;
-          }
-        } catch (error) {
-          alert('Erro ao buscar conta: ' + error.message);
+    data(){
+      return{
+         route : useRoute(),
+         router : useRouter(),
+         conta : {
+          descricao: '',
+          valor: 0,
+          data_vencimento: '',
+          multa: 0,
+          juros: 0,
+          credor: {
+                nome: '',
+                cnpj:'',
+            }
         }
-      };
-  
-      const editarConta = async () => {
-        try {
-          const response = await fetch(`http://127.0.0.1:5000/atualizarConta/${route.params.id}`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(conta.value),
-          });
-          const result = await response.json();
-          if (response.ok) {
-            alert('Conta atualizada com sucesso!');
-            router.push('/listarContas');
-          } else {
-            alert('Erro ao atualizar conta: ' + result.mensagem);
-          }
-        } catch (error) {
-          alert('Erro ao atualizar conta: ' + error.message);
+
+      }
+    } ,
+  methods:{
+
+    async fetchConta()  {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/contas/${this.route.params.id}`);
+        const data = await response.json();
+        if (data) {
+          this.conta = {
+            ...data,
+            data_vencimento: this.formatDate(data.data_vencimento), // Converte a data para o formato YYYY-MM-DD
+          };
         }
-      };
-  
-      fetchConta();
-  
-      return {
-        conta,
-        editarConta,
-      };
+      } catch (error:any) {
+        alert('Erro ao buscar conta: ' + error.message);
+      }
     },
-  });
+
+    async editarConta (){
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/contas/atualizar/${this.route.params.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({...this.conta,credor:{nome:this.conta.credor.nome,cnpj:this.conta.credor.cnpj}}),
+        });
+        const result = await response.json();
+        if (response.ok) {
+          alert('Conta atualizada com sucesso!');
+          this.router.push('/listarContas');
+        } else {
+          alert('Erro ao atualizar conta: ' + result.mensagem);
+        }
+      } catch (error:any) {
+        alert('Erro ao atualizar conta: ' + error.message);
+      }
+    },
+    formatDate(dateString: string): string {
+      // Assume que dateString está no formato YYYY-MM-DD
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses começam do 0
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+  },
+  computed:{
+   
+  },
+  mounted() {
+      this.fetchConta()
+  },}
+  
+  
+    
+  
   </script>
   
   <style scoped>

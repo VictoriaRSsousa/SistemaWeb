@@ -1,0 +1,5 @@
+/* src/assets/styles.css */
+/* Adicione essas linhas ao topo do arquivo de estilos principal */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

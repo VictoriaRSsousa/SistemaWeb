@@ -1,9 +1,9 @@
 <template>
   <div id="aboutPage">
-    <header id="headerPage">
-      <h1>Sobre</h1>
+    <header id="headerPage" class="text-xl">
+      <h1 class="text-3xl font-bold">Sobre</h1>
       <nav>
-        <RouterLink to="/">Voltar</RouterLink>
+        <RouterLink to="/" >Voltar</RouterLink>
       </nav>
     </header>
 
@@ -34,13 +34,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { RouterLink } from 'vue-router';
 
 export default defineComponent({
   name: 'Sobre',
-  components: {
-    RouterLink
-  }
+
 });
 </script>
 
