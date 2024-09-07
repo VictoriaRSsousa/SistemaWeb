@@ -69,7 +69,7 @@ def selecionar_conta_por_id(id):
                 'cnpj':conta.cnpj,
             }
         }
-        return jsonify({"Conta": response}), 201
+        return response, 201
     else:
        return jsonify({"mensagem": "Conta não encontrada"}), 400
 

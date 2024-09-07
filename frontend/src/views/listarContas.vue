@@ -17,13 +17,13 @@
         :key="i"
         :class="['conta-box', getStatusClass(conta)]"
       >
-        <RouterLink :to="`/conta/${conta.id}`" class="link-conta">
+        <RouterLink :to="`/detalhesConta/${conta.id}`" class="link-conta">
           <div class="conta-info">
             <p><strong>CNPJ:</strong> {{ conta.cnpj }}</p>
             <p><strong>Descrição:</strong> {{ conta.descricao }}</p>
             <p><strong>Valor:</strong> R$ {{ formatValor(conta.valor) }}</p>
             <p><strong>Vencimento:</strong> {{ formatDate(conta.data_vencimento) }}</p>
-            <p><strong>Multa:</strong> R$ {{ formatValor(conta.multa) }}</p>
+            <p v-if="conta.multa"><strong>Multa:</strong> R$ {{ formatValor(conta.multa) }}</p>
             <p><strong>Juros:</strong> R$ {{ formatValor(conta.juros) }}</p>
             <p><strong>Status:</strong> {{ verificarPagamento(conta.data_pagamento, conta.data_vencimento) }}</p>
           </div>
@@ -52,7 +52,7 @@ export default {
         const response = await fetch("http://127.0.0.1:5000/listarconta");
         const result = await response.json();
         this.resultado = result;
-      } catch (error) {
+      } catch (error:any) {
         alert("Erro ao listar contas: " + error.message);
       }
     },
@@ -96,12 +96,12 @@ export default {
         if (response.ok) {
           this.resultado = this.resultado.map(grupo => ({
             ...grupo,
-            contas: grupo.contas.filter(conta => conta.id !== id)
+            contas: grupo.contas.filter((conta:any) => conta.id !== id)
           }));
         } else {
           alert("Erro ao deletar conta");
         }
-      } catch (error) {
+      } catch (error:any) {
         alert("Erro ao deletar conta: " + error.message);
       }
     },

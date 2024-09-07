@@ -4,6 +4,8 @@ import sobre from '../views/sobre.vue';
 import adicionarConta from '../views/adicionarConta.vue';
 import atualizarConta from '../views/atualizarConta.vue';
 import listarContas from '../views/listarContas.vue';
+import detalharConta from '../views/detalharConta.vue';
+
 
 //Rotas ...
 const routes = [
@@ -28,9 +30,14 @@ const routes = [
     name: 'adicionarConta',
   },
   {
-    path: '/atualizarConta',
+    path: '/atualizarConta/:id',
     component: atualizarConta,
-    name: 'atualizarConta'
+    name: 'atualizarConta',
+  },
+  {
+    path: '/detalhesConta/:id',
+    component: detalharConta,
+    name: 'detalharConta',
   }
 ];
 

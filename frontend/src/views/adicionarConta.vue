@@ -70,7 +70,7 @@
             juros: 0,
             data_pagamento: '',
           };
-        } catch (error) {
+        } catch (error:any) {
           alert('Erro ao adicionar conta: ' + error.message);
         }
       },
