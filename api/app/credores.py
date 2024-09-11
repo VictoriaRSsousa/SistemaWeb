@@ -28,24 +28,42 @@ def listar_credores():
         return jsonify({'error': str(e)}),500
     
 
+@credores_bp.route('/<int:id>', methods=['GET'])
+def selecionar_credor_por_id(id):
+    credor = Credor.query.get(id)
+    if credor:
+        response = {
+            'cnpj':credor.cnpj,
+            'nome': credor.nome,
+            'endereco': credor.endereco,
+            'telefone': credor.telefone,
+            'email':credor.email,
+        
+            
+        }
+        return  response, 201
+    else:
+       return jsonify({"mensagem": "Credor não encontrado"}), 400
+    
+
 @credores_bp.route('/adicionar', methods=['POST'])
 def adicionar_credor():
-    data = request.json
+    dados = request.json
     
     if not request.json or 'cnpj' not in request.json or 'nome' not in request.json or 'endereco' not in request.json  or 'telefone' not in request.json or  'email' not in request.json :
         return jsonify({"mensagem": "Preencha todos os campos"}), 400
     
-    valida_dados_credor(data)
+    valida_dados_credor(dados)
     try: 
-        credor = Credor.query.get(data['cnpj'])
+        credor = Credor.query.get(dados['cnpj'])
         if  credor:
             return jsonify({"mensagem": "Credor já cadastrado!"}), 400
         novo_credor = Credor(
-            cnpj=data['cnpj'],
-            nome=data['nome'],
-            endereco=data['endereco'],
-            telefone=data.get('telefone'),
-            email=data.get('email')
+            cnpj=dados['cnpj'],
+            nome=dados['nome'],
+            endereco=dados['endereco'],
+            telefone=dados.get('telefone'),
+            email=dados.get('email')
         )
         db.session.add(novo_credor)
         db.session.commit()
@@ -64,8 +82,10 @@ def adicionar_credor():
 def atualizar_credor(cnpj):
     credor = Credor.query.get(cnpj)
     if not credor:
-        return jsonify({"Mensagem": "Credor não encontrado!"}), 404   
+        return jsonify({"Mensagem": "Credor não encontrado!"}), 404  
     dados = request.json
+
+    valida_dados_credor(dados)
     try:       
         if 'cnpj' not in dados and 'nome' not in dados and 'endereco' not in dados and 'telefone' not in dados and 'email' not in dados: 
             return jsonify({"mensagem":"Campo incorreto!"}),400   

@@ -1,0 +1,137 @@
+
+<script lang="ts">
+import { useRoute, useRouter } from 'vue-router';
+
+export default {
+  name: "detalhesCredor",
+  data() {
+    return {
+      route : useRoute(),
+      router : useRouter(),
+      conta: {} as any,
+      totalAPagar: 0,
+    };
+  },
+  methods: {
+    async getContaPoRiD() {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/credores/${this.route.params.cnpj}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
+
+        this.conta = data;
+      } catch (error: any) {
+        console.error(`Erro ao buscar a conta: ${error.message}`);
+      }
+    },
+
+    async apagarCredor() {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/credores/remover/ ${this.route.params.cnpj}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
+
+        this.conta = data;
+      } catch (error: any) {
+        console.error(`Erro ao buscar a conta: ${error.message}`);
+      }
+    },
+    // calcularTotal() {
+    //   const vencimento = new Date(this.conta.data_vencimento);
+    //   let pagamento = new Date(this.conta.data_pagamento);
+
+    //   if (!this.conta.data_pagamento) {
+    //     pagamento = new Date();
+    //   }
+    //   this.totalAPagar = Number(this.conta.valor) || 0;
+
+    //   if (pagamento > vencimento) {
+    //     this.totalAPagar += Number(this.conta.multa) || 0;
+
+    //     const um_dia = 24 * 60 * 60 * 1000;
+    //     const dias_atraso = Math.ceil(
+    //       (pagamento.getTime() - vencimento.getTime()) / um_dia
+    //     );
+
+    //     this.totalAPagar += (Number(this.conta.juros) || 0) * dias_atraso;
+    //   }
+
+    //   return this.totalAPagar;
+    // },
+  },
+  mounted() {
+    this.getContaPoRiD();
+  },
+};
+</script>
+<template>
+    {{ conta }}
+  <div class="w-full h-screen flex py-32 justify-center bg-gray-100">
+    <RouterLink to="/listarContas">
+      <p class="bg-green-500  text-white mr-8 px-4 py-2 font-semibold rounded-md shadow hover:bg-green-600 transition">
+        Voltar
+      </p>
+    </RouterLink>
+    <section
+      class="w-[60vw]  h-[400px] bg-white shadow-lg p-6 rounded-md border border-gray-200"
+    >
+      <header class="flex justify-between items-center mb-4 border-b pb-3">
+        <span class="flex gap-4 text-2xl font-extrabold text-gray-700">
+          <h3>{{ conta?.id }}</h3>
+          <p>{{ conta?.credor?.nome }}</p>
+        </span>
+        <div class="flex gap-3">
+          <RouterLink :to="`/atualizarConta/${conta.id}`" class="link-conta">
+            <button
+              class="w-[10vw] h-10 bg-blue-500 text-white font-bold rounded-md shadow hover:bg-blue-600 transition"
+            >
+              Editar
+            </button>
+          </RouterLink>
+          <button
+            class="w-[10vw] h-10 bg-red-500 text-white font-bold rounded-md shadow hover:bg-red-600 transition"
+            @click="apagarConta"
+          >
+            Apagar
+          </button>
+        </div>
+      </header>
+      <main class="font-medium text-gray-600">
+        <p class="text-lg text-center mb-4">{{ conta.descricao }}</p>
+        <div class="flex flex-col gap-2 items-start">
+          <p><strong>Valor:</strong> R$ {{ conta?.valor }}</p>
+          <p><strong>Juros de atraso:</strong> {{ conta?.juros }}%</p>
+          <p><strong>Multa de atraso:</strong> R$ {{ conta?.multa }}</p>
+          <p
+            v-if="!conta.data_pagamento"
+            class="w-full flex items-end justify-end text-xl font-semibold text-red-600"
+          >
+          </p>
+        </div>
+      </main>
+      <footer v-if="!conta.data_pagamento" class="mt-6 flex justify-end">
+        <button
+          class="bg-red-500 text-white w-[10vw] h-10 font-bold rounded-md shadow hover:bg-red-600 transition"
+        >
+          Pagar Conta
+        </button>
+      </footer>
+    </section>
+  </div>
+</template>
+
+

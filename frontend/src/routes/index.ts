@@ -8,8 +8,7 @@ import listarCredores from '../views/listarCredores.vue';
 import adicionarCredor from '../views/adicionarCredor.vue';
 import atualizarCredor from '../views/atualizarCredor.vue';
 import detalhesConta from '../views/detalhesConta.vue';
-import teste from '../views/teste.vue';
-
+import detalhesCredor from '../views/detalhesCredor.vue';
 //Rotas ...
 const routes = [
   {
@@ -48,7 +47,7 @@ const routes = [
     name: 'adicionarCredor'
   },
   {
-    path: '/atualizarCredor',
+    path: '/atualizarCredor/:cnpj',
     component: atualizarCredor,
     name: 'atualizarCredor'
   },
@@ -58,9 +57,9 @@ const routes = [
     name: 'detalhesConta'
   },
   {
-    path: '/teste',
-    component: teste,
-    name: 'teste'
+    path: '/detalhesCredor/:cnpj',
+    component: detalhesCredor,
+    name: 'detalhesCredor'
   }
 ];
 

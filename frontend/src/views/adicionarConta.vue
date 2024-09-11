@@ -1,6 +1,6 @@
 <template>
   <header class=" mb-7 flex w-full justify-between p-5 bg-[#4caf50] text-white items-center">
-    <h1 class="font-bold text-3xl">Cadastrar conta Conta</h1>
+    <h1 class="font-bold text-3xl">Cadastrar Nova Conta</h1>
     <nav class="text-xl">
       <RouterLink to="/">Voltar</RouterLink>
     </nav>
@@ -56,9 +56,13 @@
 </template>
 
 <script lang="ts">
+import { useRoute, useRouter } from 'vue-router';
+
 export default {
   data() {
     return {
+      route : useRoute(),
+      router : useRouter(),
       novaConta: {
         cnpj: "",
         valor: 0,
@@ -89,11 +93,12 @@ export default {
           juros: 0,
           data_pagamento: null,
         };
-        this.$router.push("/listarContas");
+        this.router.push("/listarContas");
       } catch (error: any) {
         alert("Erro ao adicionar conta: " + error.message);
       }
     },
+    
   },
 };
 </script>

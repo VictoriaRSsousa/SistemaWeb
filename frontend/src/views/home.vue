@@ -17,6 +17,9 @@
       <RouterLink to="/sobre">
         <button class="navButton">Sobre</button>
       </RouterLink>
+      <RouterLink to="/listarCredores">
+        <button class="navButton">Credores</button>
+      </RouterLink>
     </div>
   </div>
 </template>

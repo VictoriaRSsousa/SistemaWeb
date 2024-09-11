@@ -1,9 +1,13 @@
 
 <script lang="ts">
+import { useRoute, useRouter } from 'vue-router';
+
 export default {
   name: "detalhesConta",
   data() {
     return {
+      route : useRoute(),
+      router : useRouter(),
       conta: {} as any,
       totalAPagar: 0,
     };
@@ -12,7 +16,7 @@ export default {
     async getContaPoRiD() {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/contas/${this.$route.params.id}`,
+          `http://127.0.0.1:5000/contas/ ${this.route.params.id}`,
           {
             method: "GET",
             headers: {
@@ -30,7 +34,7 @@ export default {
     async pagarConta() {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/contas/pagar/${this.$route.params.id}`,
+          `http://127.0.0.1:5000/contas/pagar/ ${this.route.params.id}`,
           {
             method: "PATCH",
             headers: {
@@ -56,7 +60,7 @@ export default {
     async apagarConta() {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/contas/remover/${this.$route.params.id}`,
+          `http://127.0.0.1:5000/contas/remover/ ${this.route.params.id}`,
           {
             method: "DELETE",
             headers: {
