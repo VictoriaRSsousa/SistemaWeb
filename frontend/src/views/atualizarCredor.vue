@@ -3,7 +3,7 @@
       <header id="headerPage" class="mb-7">
         <h1 class="font-bold text-3xl">Editar Dados Credor</h1>
         <nav class="text-xl">
-          <RouterLink to="/listarCredores">Voltar</RouterLink>
+          <RouterLink :to="`/detalhesCredor/${route.params.cnpj}`">Voltar</RouterLink>
         </nav>
       </header>
 
@@ -24,12 +24,12 @@
   
         <div class="form-group">
           <label for="telefone">Telefone:</label>
-          <input type="text" id="telefone" v-model="credor.telefone" step="0.01" />
+          <input type="text" id="telefone" v-model="credor.telefone" step="0.01" required/>
         </div>
   
         <div class="form-group">
           <label for="email">E-mail:</label>
-          <input type="text" id="email" v-model="credor.email" step="0.01" />
+          <input type="text" id="email" v-model="credor.email" step="0.01" required/>
         </div>
   
         <div class="form-actions">
@@ -64,12 +64,17 @@
     async atualizarCredor(){
       try{
         const response = await fetch(`http://127.0.0.1:5000/credores/atualizar/${this.route.params.cnpj}`, {
-          method: "PATCH",
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.credor),
         });
         const result = await response.json();
-        alert(result)
+        if (response.ok) {
+          alert('Credor atualizado com sucesso!');
+          this.router.push(`/detalhesCredor/${this.route.params.cnpj}`);
+        } else {
+          alert('Erro ao atualizar conta: ' + result.mensagem);
+        }
 
 
       }catch(error){

@@ -8,6 +8,9 @@
       <RouterLink to="/listarContas">
         <button class="navButton">Contas</button>
       </RouterLink>
+      <RouterLink to="/listarCredores">
+        <button class="navButton">Credores</button>
+      </RouterLink>
       <RouterLink to="/adicionarConta">
         <button class="navButton">Adicionar Conta</button>
       </RouterLink>
@@ -17,9 +20,7 @@
       <RouterLink to="/sobre">
         <button class="navButton">Sobre</button>
       </RouterLink>
-      <RouterLink to="/listarCredores">
-        <button class="navButton">Credores</button>
-      </RouterLink>
+
     </div>
   </div>
 </template>
@@ -59,6 +60,8 @@ export default {
 
 .navButton {
   padding: 15px 40px;
+  /* width: 15vw;
+  height: 60px; */
   font-size: 20px;
   background-color: #4caf50;
   color: white;

@@ -10,13 +10,14 @@ export default {
       router : useRouter(),
       conta: {} as any,
       totalAPagar: 0,
+      formattedDate: '',
     };
   },
   methods: {
     async getContaPoRiD() {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/contas/ ${this.route.params.id}`,
+          `http://127.0.0.1:5000/contas/${this.route.params.id}`,
           {
             method: "GET",
             headers: {
@@ -25,8 +26,21 @@ export default {
           }
         );
         const data = await response.json();
+        this.conta = data
+        if (this.conta.data_pagamento) {
+          const data = new Date(this.conta.data_pagamento)
+          const ano = data.getFullYear()
+          const dia = (data.getDate()+1).toString().padStart(2, '0')
+          const mes = (data.getMonth() + 1).toString().padStart(2, '0')
+          this.formattedDate = `${ano}-${mes}-${dia}`  
+          console.log(data);
 
-        this.conta = data;
+          
+          console.log(this.formattedDate);
+          
+          
+        }
+
       } catch (error: any) {
         console.error(`Erro ao buscar a conta: ${error.message}`);
       }
@@ -34,7 +48,7 @@ export default {
     async pagarConta() {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/contas/pagar/ ${this.route.params.id}`,
+          `http://127.0.0.1:5000/contas/pagar/${this.route.params.id}`,
           {
             method: "PATCH",
             headers: {
@@ -97,21 +111,26 @@ export default {
 
       return this.totalAPagar;
     },
+    dateToString() {
+    return this.conta.data_pagamento.toString().substr(0,10)
+  }
   },
   mounted() {
     this.getContaPoRiD();
   },
+  computed:{
+  }
 };
 </script>
 <template>
-  <div class="w-full h-screen flex py-32 justify-center bg-gray-100">
+  <div class="w-full h-screen flex flex-col gap-4 items-center py-32 justify-center bg-gray-100">
     <RouterLink to="/listarContas">
-      <p class="bg-green-500  text-white mr-8 px-4 py-2 font-semibold rounded-md shadow hover:bg-green-600 transition">
+      <p class="bg-green-500 absolute top-4 left-4 text-center md:w-[8vw] w-[20vw] m-10  text-white mr-8 px-4 py-2 font-semibold rounded-md shadow hover:bg-green-600 transition">
         Voltar
       </p>
     </RouterLink>
     <section
-      class="w-[60vw]  h-[400px] bg-white shadow-lg p-6 rounded-md border border-gray-200"
+      class="w-[50vw]  h-[400px] bg-white shadow-lg p-6 rounded-md border border-gray-200"
     >
       <header class="flex justify-between items-center mb-4 border-b pb-3">
         <span class="flex gap-4 text-2xl font-extrabold text-gray-700">
@@ -148,7 +167,11 @@ export default {
           </p>
         </div>
       </main>
-      <footer v-if="!conta.data_pagamento" class="mt-6 flex justify-end">
+      <div v-if="conta.data_pagamento" class="mt-6 w-full flex justify-center flex flex-col gap-2 items-center">
+        <label for="" class="font-bold">Data de pagamento:</label>
+        <input type="date" readonly :value="formattedDate"  class="border px-3 py-2 rounded border-black"/>
+      </div>
+      <footer v-else class="mt-6 flex justify-end">
         <button
           class="bg-red-500 text-white w-[10vw] h-10 font-bold rounded-md shadow hover:bg-red-600 transition"
           @click="pagarConta"

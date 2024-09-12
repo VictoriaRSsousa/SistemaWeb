@@ -1,66 +1,69 @@
 <template>
-    <div>
-    <header class="flex w-full justify-between p-5 bg-[#4caf50] text-white items-center">
-    <h1 class="font-bold text-3xl">Listar Credores</h1>
-    <nav class="text-xl">
-      <RouterLink to="/">Voltar</RouterLink>
+  <div>
+    <header
+      class="flex w-full justify-between p-5 bg-[#4caf50] text-white items-center"
+    >
+      <h1 class="font-bold text-3xl">Listar Credores</h1>
+      <nav class="text-xl">
+        <RouterLink to="/">Voltar</RouterLink>
+      </nav>
+    </header>
+    <nav class="flex gap-4 mt-6 pr-4 w-full justify-end">
+      <div class="flex flex-col">
+        <label for=""> Cnpj:</label>
+        <input
+          v-model="cnpjCredor"
+          type="text"
+          class="border rounded border-black px-2 py-1"
+        />
+      </div>
+      <button @click="listarCredores()" class="px-2 h-8 mt-6 rounded-md border border-black">
+        Pesquisar
+      </button>
     </nav>
-  </header>
 
     <div v-for="(credor, index) in credores" :key="index" class="conta-grupo">
-      <header class="grupo-header">
-        <h2>{{ credor.nome }}</h2>
-      </header>
-
-        <RouterLink :to="`/detalhesCredor/${credor.cnpj}`" class="link-conta">
-          <div class="conta-info">
-            <p><strong>CNPJ:</strong> {{ credor.cnpj }}</p>
-            <p><strong>Nome:</strong> {{ credor.nome }}</p>
-            <p><strong>Endereço:</strong> {{ credor.endereco }}</p>
-            <p><strong>Telefone:</strong> {{ credor.telefone }}</p>
-            <p><strong>E-mail:</strong> {{ credor.email }}</p>
-          </div>
-        </RouterLink>
-      </div>
+      <RouterLink :to="`/detalhesCredor/${credor.cnpj}`" class="link-conta">
+        <div class="conta-info">
+          <p><strong>CNPJ:</strong> {{ credor.cnpj }}</p>
+          <p><strong>Nome:</strong> {{ credor.nome }}</p>
+          <p><strong>Endereço:</strong> {{ credor.endereco }}</p>
+          <p><strong>Telefone:</strong> {{ credor.telefone }}</p>
+          <p><strong>E-mail:</strong> {{ credor.email }}</p>
+        </div>
+      </RouterLink>
     </div>
+  </div>
+</template>
 
-  </template>
-  
-  <script lang="ts">
-  import { useRoute, useRouter } from 'vue-router';
-  export default {
-    data(){
-      return{
-        route : useRoute(),
-         router : useRouter(),
-         credores : [] as any
-    //      {
-    //       cnpj: '',
-    //       nome: '',
-    //       endereco: '',
-    //       telefone: '',
-    //       email: '',
-
-      
-    // }
-    ,}},
-    methods:{
-      async listarCredores(){
-        const response = await fetch('http://127.0.0.1:5000/credores/listar')
-        const result =await  response.json()
-        this.credores = result
-
-
+<script lang="ts">
+import { useRoute, useRouter } from "vue-router";
+export default {
+  data() {
+    return {
+      route: useRoute(),
+      router: useRouter(),
+      credores: [] as any,
+      cnpjCredor: "",
+    };
+  },
+  methods: {
+    async listarCredores() {
+      const url = new URL("http://127.0.0.1:5000/credores/");
+      if (this.cnpjCredor) {
+        url.searchParams.append("cnpj", this.cnpjCredor);
       }
-
+      const response = await fetch(url.toString());
+      const result = await response.json();
+      this.credores = result;
     },
-    mounted(){
-      this.listarCredores()
-
-    },
-    name: 'listarCredores',
-  };
-  </script>
+  },
+  mounted() {
+    this.listarCredores();
+  },
+  name: "listarCredores",
+};
+</script>
 
 <style scoped>
 /* Header e Navbar */

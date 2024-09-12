@@ -3,7 +3,7 @@
       <header id="headerPage" class="mb-7">
         <h1 class="font-bold text-3xl">Editar Conta</h1>
         <nav class="text-xl">
-          <RouterLink to="/listarContas">Voltar</RouterLink>
+          <RouterLink :to="`/detalhesConta/${route.params.id}`">Voltar</RouterLink>
         </nav>
       </header>
   
@@ -21,15 +21,19 @@
           <label for="data_vencimento">Data de Vencimento:</label>
           <input type="date" id="data_vencimento" v-model="conta.data_vencimento" required />
         </div>
+        <div class="form-group" v-if="conta.data_pagamento">
+          <label for="data_pagamento">Data de Pagamento:</label>
+          <input type="date" id="data_pagamento" v-model="conta.data_pagamento" required />
+        </div>
   
         <div class="form-group">
           <label for="multa">Multa:</label>
-          <input type="number" id="multa" v-model="conta.multa" step="0.01" />
+          <input type="number" id="multa" v-model="conta.multa" step="0.01" required />
         </div>
   
         <div class="form-group">
           <label for="juros">Juros:</label>
-          <input type="number" id="juros" v-model="conta.juros" step="0.01" />
+          <input type="number" id="juros" v-model="conta.juros" step="0.01" required />
         </div>
   
         <div class="form-actions">
@@ -52,6 +56,7 @@
           descricao: '',
           valor: 0,
           data_vencimento: '',
+          data_pagamento: undefined as any,
           multa: 0,
           juros: 0,
           credor: {
@@ -71,7 +76,8 @@
         if (data) {
           this.conta = {
             ...data,
-            data_vencimento: this.formatDate(data.data_vencimento), // Converte a data para o formato YYYY-MM-DD
+            data_vencimento: this.formatDate(data.data_vencimento),
+            data_pagamento : this.formatDate(data.data_pagamento) // Converte a data para o formato YYYY-MM-DD
           };
         }
       } catch (error:any) {
@@ -91,7 +97,7 @@
         const result = await response.json();
         if (response.ok) {
           alert('Conta atualizada com sucesso!');
-          this.router.push('/listarContas');
+          this.router.push(`/detalhesConta/${this.route.params.id}`);
         } else {
           alert('Erro ao atualizar conta: ' + result.mensagem);
         }
@@ -100,11 +106,11 @@
       }
     },
     formatDate(dateString: string): string {
-      // Assume que dateString está no formato YYYY-MM-DD
+      if (!dateString) return '';
       const date = new Date(dateString);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses começam do 0
-      const day = String(date.getDate()).padStart(2, '0');
+      const day = String(date.getDate()+1).padStart(2, '0');
       return `${year}-${month}-${day}`;
     },
   },
