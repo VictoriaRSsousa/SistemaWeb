@@ -1,4 +1,10 @@
 <template>
+  <header class=" mb-7 flex w-full justify-between p-5 bg-[#4caf50] text-white items-center">
+    <h1 class="font-bold text-3xl">Cadastrar Novo Credor</h1>
+    <nav class="text-xl">
+      <RouterLink to="/">Voltar</RouterLink>
+    </nav>
+  </header>
   <div id="adicionarCredor">
     <h2>Cadastro de novo Credor</h2>
     <form @submit.prevent="adicionarCredor">
@@ -28,11 +34,15 @@
 </template>
   
   <script lang="ts">
+  import { useRoute, useRouter } from 'vue-router';
+
   export default {
     name: 'adicionarCredor',
     data(){
 
       return{
+        route: useRoute(),
+        router: useRouter(),
         novoCredor:{
           cnpj:"",
           nome:"",
@@ -43,8 +53,32 @@
       }
     },
     methods:{
-      adicionarCredor(){
-        alert("olá mundo")
+      async adicionarCredor() {
+        try {
+          const response = await fetch("http://127.0.0.1:5000/credores/adicionar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.novoCredor),
+        });
+        const result = await response.json();
+        alert (result.mensagem);
+        this.novoCredor = {
+
+          cnpj:"",
+          nome:"",
+          endereco:"",
+          telefone:"", 
+          email:"" 
+
+        };
+        this.router.push("/listarCredores");
+
+
+        }catch (error: any) {
+        alert("Erro ao adicionar credor: " + error.message);
+      }
+        
+        
       }
     }
 

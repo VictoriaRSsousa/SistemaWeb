@@ -1,15 +1,34 @@
 <template>
   <div>
-    <header class="flex w-full justify-between p-5 bg-[#4caf50] text-white items-center">
-    <h1 class="font-bold text-3xl">Listar Conta</h1>
-    <nav class="text-xl">
-      <RouterLink to="/">Voltar</RouterLink>
+    <header
+      class="flex w-full justify-between p-5 bg-[#4caf50] text-white items-center"
+    >
+      <h1 class="font-bold text-3xl">Listar Conta</h1>
+      <nav class="text-xl">
+        <RouterLink to="/">Voltar</RouterLink>
+      </nav>
+    </header>
+    <nav class="flex gap-4 mt-6 pr-4  w-full justify-end">
+      <div class="flex flex-col">
+        <label for="" >Data de pagamento:</label>
+        <input @change="listarContas()" type="date" v-model="dataPagamento" class="border rounded border-black px-2 py-1">
+      </div>
+      <div class="flex flex-col">
+        <label for="" >Data de vencimento:</label>
+        <input @change="listarContas()" v-model="dataVencimento" type="date" class="border rounded border-black px-2 py-1">
+      </div>
+      <button @click="limparFiltro()">Limpar filtro</button>
+  
+  
     </nav>
-  </header>
 
-    <div v-for="(contaGrupo, index) in resultado" :key="index" class="conta-grupo">
+    <div
+      v-for="(contaGrupo, index) in resultado"
+      :key="index"
+      class="conta-grupo"
+    >
       <header class="grupo-header">
-        <h2>{{ contaGrupo.empresa.nome }}</h2>
+        <h2 class="text-2xl font-bold mb-4">{{ contaGrupo.empresa.nome }}</h2>
       </header>
 
       <div
@@ -22,18 +41,18 @@
             <p><strong>CNPJ:</strong> {{ conta.cnpj }}</p>
             <p><strong>Descrição:</strong> {{ conta.descricao }}</p>
             <p><strong>Valor:</strong> R$ {{ formatValor(conta.valor) }}</p>
-            <p><strong>Vencimento:</strong> {{ formatDate(conta.data_vencimento) }}</p>
-            <!-- <p><strong>Multa:</strong> R$ {{ formatValor(conta.multa) }}</p>
-            <p><strong>Juros:</strong> R$ {{ formatValor(conta.juros) }}</p> -->
-            <p><strong>Status:</strong> {{ verificarPagamento(conta.data_pagamento, conta.data_vencimento) }}</p>
+            <p>
+              <strong>Vencimento:</strong>
+              {{ formatDate(conta.data_vencimento) }}
+            </p>
+            <p>
+              <strong>Status:</strong>
+              {{
+                verificarPagamento(conta.data_pagamento, conta.data_vencimento)
+              }}
+            </p>
           </div>
         </RouterLink>
-        <!-- <div class="conta-actions">
-          <RouterLink :to="`/atualizarConta/${conta.id}`">
-            <button class="action-button edit-button">Editar</button>
-          </RouterLink>
-          <button class="action-button delete-button" @click="deletarConta(conta.id)">Excluir</button>
-        </div> -->
       </div>
     </div>
   </div>
@@ -44,15 +63,38 @@ export default {
   data() {
     return {
       resultado: [] as any[],
+      dataPagamento: '',
+      dataVencimento: ''
     };
   },
   methods: {
     async listarContas() {
       try {
-        const response = await fetch("http://127.0.0.1:5000/contas/listar");
+        const url = new URL("http://127.0.0.1:5000/contas/");
+      if (this.dataPagamento) {
+        url.searchParams.append("data_pagamento", this.dataPagamento);
+      }
+      if (this.dataVencimento) {
+        url.searchParams.append("data_vencimento", this.dataVencimento);
+      }
+      const response = await fetch(url.toString());
         const result = await response.json();
         this.resultado = result;
-      } catch (error:any) {
+      } catch (error: any) {
+        alert("Erro ao listar contas: " + error.message);
+      }
+    },
+    async limparFiltro(){
+      this.dataPagamento = ''
+      this.dataVencimento = ''
+      try {
+        const url = new URL("http://127.0.0.1:5000/contas/");
+        url.searchParams.delete('data_pagamento');
+        url.searchParams.delete('data_vencimento');
+      const response = await fetch(url.toString());
+        const result = await response.json();
+        this.resultado = result;
+      } catch (error: any) {
         alert("Erro ao listar contas: " + error.message);
       }
     },
@@ -68,7 +110,10 @@ export default {
       }
     },
     getStatusClass(conta: any) {
-      const status = this.verificarPagamento(conta.data_pagamento, conta.data_vencimento);
+      const status = this.verificarPagamento(
+        conta.data_pagamento,
+        conta.data_vencimento
+      );
       switch (status) {
         case "Paga":
           return "status-paga";
@@ -80,9 +125,13 @@ export default {
           return "status-cancelada";
       }
     },
-    formatDate(dateString: string) {
-      const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-      return new Date(dateString).toLocaleDateString('pt-BR', options);
+    formatDate(dateString: string): string {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Meses começam do 0
+      const day = String(date.getDate() + 1).padStart(2, "0");
+      return `${day}/${month}/${year}`;
     },
     formatValor(valor: any) {
       const number = parseFloat(valor);
@@ -90,18 +139,21 @@ export default {
     },
     async deletarConta(id: number) {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/removerConta/${id}`, {
-          method: 'DELETE',
-        });
+        const response = await fetch(
+          `http://127.0.0.1:5000/removerConta/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
         if (response.ok) {
-          this.resultado = this.resultado.map(grupo => ({
+          this.resultado = this.resultado.map((grupo) => ({
             ...grupo,
-            contas: grupo.contas.filter((conta:any) => conta.id !== id)
+            contas: grupo.contas.filter((conta: any) => conta.id !== id),
           }));
         } else {
           alert("Erro ao deletar conta");
         }
-      } catch (error:any) {
+      } catch (error: any) {
         alert("Erro ao deletar conta: " + error.message);
       }
     },
@@ -213,4 +265,3 @@ export default {
   background-color: #d32f2f;
 }
 </style>
-

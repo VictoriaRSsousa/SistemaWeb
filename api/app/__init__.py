@@ -12,8 +12,8 @@ def create_app():
     CORS(app)
 
     # Import and register blueprints
-    from .credores import credores_bp
-    from .contas_a_pagar import contas_bp
+    from .controller_credores import credores_bp
+    from .controller_contas_a_pagar import contas_bp
 
     #app.register_blueprint(credor_bp, url_prefix='/credores')
     app.register_blueprint(contas_bp, url_prefix='/contas')

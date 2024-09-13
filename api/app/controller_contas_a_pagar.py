@@ -1,6 +1,7 @@
 from flask import jsonify, request,Blueprint
 from .models import db,ContaAPagar,Credor 
-from .utils.validacoes import valida_dados_contas_a_pagar,valida_data_pagamento,valida_valor
+from .utils.validacoes import valida_dados_contas_a_pagar,valida_data_pagamento,valida_data_vencimento,valida_valor
+from datetime import datetime
 
 
 
@@ -8,18 +9,19 @@ contas_bp = Blueprint('contas_bp', __name__)
 
 
 
-@contas_bp.route('/listar', methods=['GET'])
+@contas_bp.route('/', methods=['GET'])
 def listar_contas():
-    cnpj = request.args.get('cnpj')
+
+# FILTRAGEM POR DATA INCORRETA
     data_vencimento = request.args.get('data_vencimento')
+    data_pagamento = request.args.get('data_pagamento')
 
-    credores_query = Credor.query
-
-  
-    if cnpj:
-        credores_query = credores_query.filter(Credor.cnpj == cnpj)  
+    credores_query = Credor.query.join(Credor.contas) 
     if data_vencimento:
-        credores_query = credores_query.filter(ContaAPagar.data_vencimento == data_vencimento)    
+        credores_query = credores_query.filter(ContaAPagar.data_vencimento == data_vencimento)  
+    if data_pagamento:
+        data_pagamento_date = datetime.strptime(data_pagamento, '%Y-%m-%d').date()
+        credores_query = credores_query.filter(ContaAPagar.data_pagamento == data_pagamento_date)
     credores = credores_query.all()
 
     response = []
