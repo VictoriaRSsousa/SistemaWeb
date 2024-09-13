@@ -49,11 +49,7 @@ def selecionar_conta_por_id(id):
                 'cnpj':conta.cnpj,
             }
         }
-<<<<<<< HEAD:api/contas_a_pagar.py
         return response, 201
-=======
-        return  response, 201
->>>>>>> af560d077d6415f0865ad7bcb88838fc92d45d06:api/app/contas_a_pagar.py
     else:
        return jsonify({"mensagem": "Conta não encontrada"}), 400
 

@@ -23,13 +23,8 @@
             <p><strong>Descrição:</strong> {{ conta.descricao }}</p>
             <p><strong>Valor:</strong> R$ {{ formatValor(conta.valor) }}</p>
             <p><strong>Vencimento:</strong> {{ formatDate(conta.data_vencimento) }}</p>
-<<<<<<< HEAD
-            <p v-if="conta.multa"><strong>Multa:</strong> R$ {{ formatValor(conta.multa) }}</p>
-            <p><strong>Juros:</strong> R$ {{ formatValor(conta.juros) }}</p>
-=======
             <!-- <p><strong>Multa:</strong> R$ {{ formatValor(conta.multa) }}</p>
             <p><strong>Juros:</strong> R$ {{ formatValor(conta.juros) }}</p> -->
->>>>>>> af560d077d6415f0865ad7bcb88838fc92d45d06
             <p><strong>Status:</strong> {{ verificarPagamento(conta.data_pagamento, conta.data_vencimento) }}</p>
           </div>
         </RouterLink>

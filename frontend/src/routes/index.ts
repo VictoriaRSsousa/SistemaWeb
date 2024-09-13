@@ -4,16 +4,11 @@ import sobre from '../views/sobre.vue';
 import adicionarConta from '../views/adicionarConta.vue';
 import atualizarConta from '../views/atualizarConta.vue';
 import listarContas from '../views/listarContas.vue';
-<<<<<<< HEAD
-import detalharConta from '../views/detalharConta.vue';
-
-=======
 import listarCredores from '../views/listarCredores.vue';
 import adicionarCredor from '../views/adicionarCredor.vue';
 import atualizarCredor from '../views/atualizarCredor.vue';
 import detalhesConta from '../views/detalhesConta.vue';
-import teste from '../views/teste.vue';
->>>>>>> af560d077d6415f0865ad7bcb88838fc92d45d06
+// import teste from '../views/teste.vue';
 
 //Rotas ...
 const routes = [
@@ -40,14 +35,6 @@ const routes = [
   {
     path: '/atualizarConta/:id',
     component: atualizarConta,
-<<<<<<< HEAD
-    name: 'atualizarConta',
-  },
-  {
-    path: '/detalhesConta/:id',
-    component: detalharConta,
-    name: 'detalharConta',
-=======
     name: 'atualizarConta'
   },
   {
@@ -70,12 +57,11 @@ const routes = [
     component: detalhesConta,
     name: 'detalhesConta'
   },
-  {
-    path: '/teste',
-    component: teste,
-    name: 'teste'
->>>>>>> af560d077d6415f0865ad7bcb88838fc92d45d06
-  }
+  // {
+  //   path: '/teste',
+  //   component: teste,
+  //   name: 'teste'
+  // }
 ];
 
 // Adicionar rota credor
