@@ -1,3 +1,46 @@
+ <template>
+  <div class="page-container">
+    <header class="page-header">
+      <h1>Detalhes da Conta</h1>
+      <nav>
+        <RouterLink to="/listarContas" class="back-link">
+          <i class="fas fa-arrow-left"></i> Voltar para Lista
+        </RouterLink>
+      </nav>
+    </header>
+    <div class="conta-details">
+      <div class="conta-header">
+        <h2>{{ conta?.credor?.nome }} - Conta #{{ conta?.id }}</h2>
+        <div class="action-buttons">
+          <RouterLink :to="`/atualizarConta/${conta.id}`" class="edit-button">
+            <i class="fas fa-edit"></i> Editar
+          </RouterLink>
+          <button @click="apagarConta" class="delete-button">
+            <i class="fas fa-trash-alt"></i> Apagar
+          </button>
+        </div>
+      </div>
+      <div class="conta-info">
+        <p><strong>Descrição:</strong> {{ conta.descricao }}</p>
+        <p><strong>Valor:</strong> R$ {{ conta?.valor }}</p>
+        <p><strong>Juros de atraso:</strong> {{ conta?.juros }}%</p>
+        <p><strong>Multa de atraso:</strong> R$ {{ conta?.multa }}</p>
+        <p v-if="!conta.data_pagamento" class="total-a-pagar">
+          <strong>Total a pagar:</strong> R$ {{ calcularTotal() }}
+        </p>
+      </div>
+      <div v-if="conta.data_pagamento" class="pagamento-info">
+        <p><strong>Data de pagamento:</strong></p>
+        <input type="date" readonly :value="formattedDate" class="date-input" />
+      </div>
+      <footer v-else class="footer-actions">
+        <button @click="pagarConta" class="pay-button">
+          <i class="fas fa-money-bill-wave"></i> Pagar Conta
+        </button>
+      </footer>
+    </div>
+  </div>
+</template>
 
 <script lang="ts">
 import { useRoute, useRouter } from 'vue-router';
@@ -122,65 +165,79 @@ export default {
   }
 };
 </script>
-<template>
-  <div class="w-full h-screen flex flex-col gap-4 items-center py-32 justify-center bg-gray-100">
-    <RouterLink to="/listarContas">
-      <p class="bg-green-500 absolute top-4 left-4 text-center md:w-[8vw] w-[20vw] m-10  text-white mr-8 px-4 py-2 font-semibold rounded-md shadow hover:bg-green-600 transition">
-        Voltar
-      </p>
-    </RouterLink>
-    <section
-      class="w-[50vw]  h-[400px] bg-white shadow-lg p-6 rounded-md border border-gray-200"
-    >
-      <header class="flex justify-between items-center mb-4 border-b pb-3">
-        <span class="flex gap-4 text-2xl font-extrabold text-gray-700">
-          <h3>{{ conta?.id }}</h3>
-          <p>{{ conta?.credor?.nome }}</p>
-        </span>
-        <div class="flex gap-3">
-          <RouterLink :to="`/atualizarConta/${conta.id}`" class="link-conta">
-            <button
-              class="w-[10vw] h-10 bg-blue-500 text-white font-bold rounded-md shadow hover:bg-blue-600 transition"
-            >
-              Editar
-            </button>
-          </RouterLink>
-          <button
-            class="w-[10vw] h-10 bg-red-500 text-white font-bold rounded-md shadow hover:bg-red-600 transition"
-            @click="apagarConta"
-          >
-            Apagar
-          </button>
-        </div>
-      </header>
-      <main class="font-medium text-gray-600">
-        <p class="text-lg text-center mb-4">{{ conta.descricao }}</p>
-        <div class="flex flex-col gap-2 items-start">
-          <p><strong>Valor:</strong> R$ {{ conta?.valor }}</p>
-          <p><strong>Juros de atraso:</strong> {{ conta?.juros }}%</p>
-          <p><strong>Multa de atraso:</strong> R$ {{ conta?.multa }}</p>
-          <p
-            v-if="!conta.data_pagamento"
-            class="w-full flex items-end justify-end text-xl font-semibold text-red-600"
-          >
-            Total a pagar: R$ {{ calcularTotal() }}
-          </p>
-        </div>
-      </main>
-      <div v-if="conta.data_pagamento" class="mt-6 w-full flex justify-center flex flex-col gap-2 items-center">
-        <label for="" class="font-bold">Data de pagamento:</label>
-        <input type="date" readonly :value="formattedDate"  class="border px-3 py-2 rounded border-black"/>
-      </div>
-      <footer v-else class="mt-6 flex justify-end">
-        <button
-          class="bg-red-500 text-white w-[10vw] h-10 font-bold rounded-md shadow hover:bg-red-600 transition"
-          @click="pagarConta"
-        >
-          Pagar Conta
-        </button>
-      </footer>
-    </section>
-  </div>
-</template>
 
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
 
+.page-container {
+  font-family: 'Roboto', sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  color: #3498db;
+}
+
+.back-link {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.conta-details {
+  background-color: #f8f9fa;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.conta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.conta-header h2 {
+  font-size: 20px;
+  color: #333;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-button, .delete-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.edit-button {
+  background-color: #3498db;
+  color: white;
+}
+
+.delete-button {
+  background-color: #e74c3c; 
+  color: white;
+}
+</style>

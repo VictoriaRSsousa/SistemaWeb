@@ -1,58 +1,39 @@
 <template>
-  <div>
-    <header
-      class="flex w-full justify-between p-5 bg-[#4caf50] text-white items-center"
-    >
-      <h1 class="font-bold text-3xl">Listar Conta</h1>
-      <nav class="text-xl">
-        <RouterLink to="/">Voltar</RouterLink>
-      </nav>
+  <div id="listarContasPage">
+    <header class="header">
+      <h1>Listar Contas</h1>
+      <RouterLink to="/" class="navButton">
+        <i class="fas fa-home"></i>
+        <span>Voltar</span>
+      </RouterLink>
     </header>
-    <nav class="flex gap-4 mt-6 pr-4  w-full justify-end">
-      <div class="flex flex-col">
-        <label for="" >Data de pagamento:</label>
-        <input @change="listarContas()" type="date" v-model="dataPagamento" class="border rounded border-black px-2 py-1">
-      </div>
-      <div class="flex flex-col">
-        <label for="" >Data de vencimento:</label>
-        <input @change="listarContas()" v-model="dataVencimento" type="date" class="border rounded border-black px-2 py-1">
-      </div>
-      <button @click="limparFiltro()">Limpar filtro</button>
-  
-  
-    </nav>
 
-    <div
-      v-for="(contaGrupo, index) in resultado"
-      :key="index"
-      class="conta-grupo"
-    >
-      <header class="grupo-header">
-        <h2 class="text-2xl font-bold mb-4">{{ contaGrupo.empresa.nome }}</h2>
-      </header>
+    <div id="listarContasContent">
+      <div class="filter-group">
+        <div class="filter-item">
+          <label for="dataPagamento">Data de pagamento:</label>
+          <input @change="listarContas" type="date" v-model="dataPagamento" id="dataPagamento">
+        </div>
+        <div class="filter-item">
+          <label for="dataVencimento">Data de vencimento:</label>
+          <input @change="listarContas" v-model="dataVencimento" type="date" id="dataVencimento">
+        </div>
+        <button @click="limparFiltro" class="navButton">Limpar filtro</button>
+      </div>
 
-      <div
-        v-for="(conta, i) in contaGrupo.contas"
-        :key="i"
-        :class="['conta-box', getStatusClass(conta)]"
-      >
-        <RouterLink :to="`/detalhesConta/${conta.id}`" class="link-conta">
-          <div class="conta-info">
-            <p><strong>CNPJ:</strong> {{ conta.cnpj }}</p>
-            <p><strong>Descrição:</strong> {{ conta.descricao }}</p>
-            <p><strong>Valor:</strong> R$ {{ formatValor(conta.valor) }}</p>
-            <p>
-              <strong>Vencimento:</strong>
-              {{ formatDate(conta.data_vencimento) }}
-            </p>
-            <p>
-              <strong>Status:</strong>
-              {{
-                verificarPagamento(conta.data_pagamento, conta.data_vencimento)
-              }}
-            </p>
-          </div>
-        </RouterLink>
+      <div v-for="(contaGrupo, index) in resultado" :key="index" class="conta-grupo">
+        <h2>{{ contaGrupo.empresa.nome }}</h2>
+        <div v-for="(conta, i) in contaGrupo.contas" :key="i" :class="['conta-box', getStatusClass(conta)]">
+          <RouterLink :to="`/detalhesConta/${conta.id}`" class="link-conta">
+            <div class="conta-info">
+              <p><strong>CNPJ:</strong> {{ conta.cnpj }}</p>
+              <p><strong>Descrição:</strong> {{ conta.descricao }}</p>
+              <p><strong>Valor:</strong> R$ {{ formatValor(conta.valor) }}</p>
+              <p><strong>Vencimento:</strong> {{ formatDate(conta.data_vencimento) }}</p>
+              <p><strong>Status:</strong> {{ verificarPagamento(conta.data_pagamento, conta.data_vencimento) }}</p>
+            </div>
+          </RouterLink>
+        </div>
       </div>
     </div>
   </div>
@@ -165,47 +146,83 @@ export default {
 </script>
 
 <style scoped>
-/* Header e Navbar */
-#headerPage {
+.filter-group {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  background-color: #4caf50;
-  color: white;
+  justify-content: flex-end;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
-#headerPage nav a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
+.filter-item {
+  display: flex;
+  flex-direction: column;
 }
 
-#headerPage nav a:hover {
-  text-decoration: underline;
-}
-
-/* Estilizando o grupo de contas */
 .conta-grupo {
-  margin: 20px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #f9f9f9;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
-/* Estilizando o box de cada conta */
 .conta-box {
+  border-radius: 8px;
   padding: 15px;
   margin-bottom: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
-/* Status das contas */
+.header {
+  width: 100%;
+  padding: 20px;
+  background-color: #3498db;
+  color: white;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+#listarContasPage {
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.navButton {
+  display: inline-flex; 
+  padding: 10px 20px;
+  font-size: 16px; 
+  min-width: 120px; 
+  background-color: #ffffff;
+  color: #333;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.navButton i {
+  font-size: 24px;
+  margin-right: 8px;
+}
+
+.navButton:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.navButton:active {
+  transform: translateY(0);
+}
+
 .status-paga {
   background-color: #c8e6c9;
 }
@@ -222,7 +239,6 @@ export default {
   background-color: #e0e0e0;
 }
 
-/* Informações da conta */
 .conta-info p {
   margin: 5px 0;
 }
@@ -230,38 +246,5 @@ export default {
 .link-conta {
   text-decoration: none;
   color: inherit;
-  flex: 1;
-}
-
-/* Ações da conta */
-.conta-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.action-button {
-  padding: 8px 15px;
-  font-size: 14px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.edit-button {
-  background-color: #1976d2;
-  color: white;
-}
-
-.edit-button:hover {
-  background-color: #1565c0;
-}
-
-.delete-button {
-  background-color: #e53935;
-  color: white;
-}
-
-.delete-button:hover {
-  background-color: #d32f2f;
 }
 </style>

@@ -1,45 +1,44 @@
-<template>
-    <div id="editPage">
-      <header id="headerPage" class="mb-7">
-        <h1 class="font-bold text-3xl">Editar Conta</h1>
-        <nav class="text-xl">
-          <RouterLink :to="`/detalhesConta/${route.params.id}`">Voltar</RouterLink>
+  <template>
+    <div class="page-container">
+      <header class="page-header">
+        <h1>Editar Conta</h1>
+        <nav>
+          <RouterLink :to="`/detalhesConta/${route.params.id}`" class="back-link">
+            <i class="fas fa-arrow-left"></i> Voltar
+          </RouterLink>
         </nav>
       </header>
-  
-      <form @submit.prevent="editarConta" id="editForm">
-        <div class="form-group">
-          <label for="descricao">Descrição:</label>
-          <input type="text" id="descricao" v-model="conta.descricao" required />
-        </div>
-  
-        <div class="form-group">
-          <label for="valor">Valor:</label>
-          <input type="number" id="valor" v-model="conta.valor" step="0.01" required />
-        </div>
-        <div class="form-group">
-          <label for="data_vencimento">Data de Vencimento:</label>
-          <input type="date" id="data_vencimento" v-model="conta.data_vencimento" required />
-        </div>
-        <div class="form-group" v-if="conta.data_pagamento">
-          <label for="data_pagamento">Data de Pagamento:</label>
-          <input type="date" id="data_pagamento" v-model="conta.data_pagamento" required />
-        </div>
-  
-        <div class="form-group">
-          <label for="multa">Multa:</label>
-          <input type="number" id="multa" v-model="conta.multa" step="0.01" required />
-        </div>
-  
-        <div class="form-group">
-          <label for="juros">Juros:</label>
-          <input type="number" id="juros" v-model="conta.juros" step="0.01" required />
-        </div>
-  
-        <div class="form-actions">
-          <button type="submit">Salvar</button>
-        </div>
-      </form>
+      <div class="form-container">
+        <form @submit.prevent="editarConta">
+          <div class="form-group">
+            <label for="descricao">Descrição:</label>
+            <input type="text" id="descricao" v-model="conta.descricao" required />
+          </div>
+          <div class="form-group">
+            <label for="valor">Valor:</label>
+            <input type="number" id="valor" v-model="conta.valor" step="0.01" required />
+          </div>
+          <div class="form-group">
+            <label for="data_vencimento">Data de Vencimento:</label>
+            <input type="date" id="data_vencimento" v-model="conta.data_vencimento" required />
+          </div>
+          <div class="form-group" v-if="conta.data_pagamento">
+            <label for="data_pagamento">Data de Pagamento:</label>
+            <input type="date" id="data_pagamento" v-model="conta.data_pagamento" required />
+          </div>
+          <div class="form-group">
+            <label for="multa">Multa:</label>
+            <input type="number" id="multa" v-model="conta.multa" step="0.01" required />
+          </div>
+          <div class="form-group">
+            <label for="juros">Juros:</label>
+            <input type="number" id="juros" v-model="conta.juros" step="0.01" required />
+          </div>
+          <button type="submit" class="submit-button">
+            <i class="fas fa-save"></i> Salvar Alterações
+          </button>
+        </form>
+      </div>
     </div>
   </template>
   
@@ -121,73 +120,79 @@
       this.fetchConta()
   },}
   
-  
-    
-  
   </script>
   
+  
   <style scoped>
-  #headerPage {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background-color: #4caf50;
-    color: white;
-  }
-  
-  #headerPage nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  #headerPage nav a:hover {
-    text-decoration: underline;
-  }
-  
-  #editForm {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .form-group input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .form-actions {
-    text-align: center;
-  }
-  
-  .form-actions button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .form-actions button:hover {
-    background-color: #388e3c;
-  }
-  </style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+.page-container {
+  font-family: 'Roboto', sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  color: #3498db;
+}
+
+.back-link {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.form-container {
+  background-color: #f8f9fa;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #333;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.submit-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #2980b9;
+}
+</style>

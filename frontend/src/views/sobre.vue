@@ -47,7 +47,7 @@ export default defineComponent({
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  background-color: #4caf50;
+  background-color: #2980b9;
   color: white;
 }
 
@@ -71,9 +71,13 @@ export default defineComponent({
 }
 
 h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
+  text-align: center; 
+  margin-bottom: 10px; 
+  color: #000000; 
+  font-weight: bold; 
+  font-size: 2rem; 
+  text-transform: uppercase; 
+  border-radius: 5px; 
 }
 
 .team-list {
@@ -87,7 +91,7 @@ h2 {
 }
 
 .team-list li strong {
-  color: #4caf50;
+  color: #2980b9;
 }
 
 .team-list li a {
