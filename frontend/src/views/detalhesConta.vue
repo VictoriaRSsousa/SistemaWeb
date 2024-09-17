@@ -93,7 +93,7 @@ export default {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ data_pagamento: new Date().toISOString().split('T')[0], valor: this.totalAPagar }), 
+            body: JSON.stringify({ data_pagamento: new Date().toISOString().split('T')[0], valor: this.totalAPagar,status: 'PAGA' }), 
           }
         );
 
@@ -113,7 +113,7 @@ export default {
     async apagarConta() {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/contas/remover/ ${this.route.params.id}`,
+          `http://127.0.0.1:5000/contas/remover/${this.route.params.id}`,
           {
             method: "DELETE",
             headers: {
@@ -123,7 +123,9 @@ export default {
         );
         const data = await response.json();
 
-        this.conta = data;
+        console.log(data);
+        this.router.push('/listarContas/')
+        
       } catch (error: any) {
         console.error(`Erro ao buscar a conta: ${error.Mensagem}`);
       }
@@ -235,5 +237,41 @@ export default {
 .delete-button {
   background-color: #e74c3c; 
   color: white;
+}
+.pay-button {
+  margin-top:20px;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #e74c3c; /* Cor de fundo vermelha */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.pay-button i {
+  margin-right: 8px; /* Espaçamento entre o ícone e o texto */
+}
+
+.pay-button span {
+  margin-left: 4px;
+}
+
+.pay-button:hover {
+  background-color: #d32f2f; /* Cor de fundo ao passar o mouse */
+}
+
+.pay-button:active {
+  background-color: #c62828; /* Cor de fundo ao clicar */
+  transform: scale(0.98); /* Efeito de clique */
+}
+
+.pay-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.5); /* Sombra para foco */
 }
 </style>

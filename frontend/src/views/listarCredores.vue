@@ -129,7 +129,7 @@ body {
 .filter-item {
   display: flex;
   flex-direction: column;
-  border: 1px solid black; 
+
   padding: 10px; 
   background-color: #ffffff; 
   border-radius: 8px; 

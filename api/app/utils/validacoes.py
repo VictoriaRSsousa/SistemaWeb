@@ -17,6 +17,11 @@ def valida_valor(valor):
     
     return None
 
+def valida_status(status):
+    if not (isinstance(status, str) and len(status) > 3):
+        return {"Mensagem": "Status inválida!"}
+    return None
+
 def valida_descricao(descricao):
     if not (isinstance(descricao, str) and len(descricao) > 0):
         return {"Mensagem": "Descrição inválida!"}
@@ -49,6 +54,10 @@ def valida_juros(juros):
         
 def valida_dados_contas_a_pagar(dados):
     erro = valida_cnpj(dados.get('cnpj'))
+    if erro:
+        return erro 
+    
+    erro = valida_status(dados.get('status'))
     if erro:
         return erro 
 

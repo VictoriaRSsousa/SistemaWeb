@@ -13,11 +13,12 @@ class ContaAPagar(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cnpj = db.Column(db.String(14), db.ForeignKey('credores.cnpj'), nullable=False)
     valor = db.Column(db.Numeric(10, 2), nullable=False)
-    descricao = db.Column(db.String(255))
+    descricao = db.Column(db.String(255), nullable=False)
     data_vencimento = db.Column(db.Date, nullable=False)
-    multa = db.Column(db.Numeric(10, 2))
+    multa = db.Column(db.Numeric(10, 2), nullable=False)
     data_pagamento = db.Column(db.Date)
-    juros = db.Column(db.Numeric(10, 2))
+    juros = db.Column(db.Numeric(10, 2), nullable=False)
+    status = db.Column(db.String(20), nullable=False)
 
     credor = db.relationship('Credor', backref='contas')
 

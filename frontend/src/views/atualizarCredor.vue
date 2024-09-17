@@ -59,29 +59,26 @@
       }
     } ,
   methods: {
-    async atualizarCredor(){
-      try{
-        const response = await fetch(`http://127.0.0.1:5000/credores/atualizar/${this.route.params.cnpj}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.credor),
-        });
-        const result = await response.json();
-        if (response.ok) {
-          alert('Credor atualizado com sucesso!');
-          this.router.push(`/detalhesCredor/${this.credor.cnpj}`);
-        } else {
-          alert('Erro ao atualizar conta: ' + result.mensagem);
-        }
+    async atualizarCredor() {
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/credores/atualizar/${this.route.params.cnpj}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.credor),
+    });
+    const result = await response.json();
 
-
-      }catch(error){
-        alert(error)
-
-      }
-      
-
-    },
+    if (response.ok) {
+      alert('Credor atualizado com sucesso!');
+      this.router.push(`/detalhesCredor/${this.credor.cnpj}`);
+    } else {
+      const errorMessage = result.Mensagem || 'Erro desconhecido ao atualizar o credor.';
+      alert('Erro ao atualizar credor: ' + errorMessage);
+    }
+  } catch (error:any) {
+    alert('Erro ao atualizar credor: ' + (error.message || 'Erro desconhecido'));
+  }
+},
     async buscarCredor(){
       try{
         const response = await fetch(`http://127.0.0.1:5000/credores/${this.route.params.cnpj}`)
@@ -89,8 +86,8 @@
         this.credor = result  
 
 
-      }catch(error){
-        alert(error)
+      }catch(error:any){
+        alert(error.Mensagem)
       }
     }
 

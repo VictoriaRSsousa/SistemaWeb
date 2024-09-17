@@ -1,6 +1,8 @@
 from flask import jsonify, request,Blueprint
 from .models import db,Credor 
-from .utils.validacoes import valida_cnpj,valida_dados_credor,valida_email,valida_endereco,valida_nome,valida_telefone
+from .utils.validacoes import valida_cnpj,valida_dados_credor
+from sqlalchemy.exc import SQLAlchemyError
+import traceback
 
 credores_bp = Blueprint('credores_bp', __name__)
 
@@ -55,9 +57,8 @@ def adicionar_credor():
         dados = request.json
         erro = valida_dados_credor(dados)
         if erro:
-            return jsonify(erro), 400  # Retorna o erro encontrado
+            return jsonify(erro), 400  
         
-        # Lógica para adicionar o credor no banco de dados
         novo_credor = Credor(
             cnpj=dados['cnpj'],
             nome=dados['nome'],
@@ -77,15 +78,19 @@ def adicionar_credor():
         
 
     
-@credores_bp.route('/atualizar/<int:cnpj>', methods=['PUT'])
+@credores_bp.route('/atualizar/<string:cnpj>', methods=['PUT'])
 def atualizar_credor(cnpj):
     credor = Credor.query.get(cnpj)
     if not credor:
-        return jsonify({"Mensagem": "Credor nao encontrado!"}), 404  
+        return jsonify({"Mensagem": "Credor não encontrado!"}), 404
+
     dados = request.json
 
-    valida_dados_credor(dados)
-    try:       
+    try:
+        erro = valida_dados_credor(dados)
+        if erro:
+            return jsonify(erro), 400
+
         credor.nome = dados.get('nome', credor.nome)
         credor.endereco = dados.get('endereco', credor.endereco)
         credor.telefone = dados.get('telefone', credor.telefone)
@@ -93,11 +98,13 @@ def atualizar_credor(cnpj):
         credor.cnpj = dados.get('cnpj', credor.cnpj)
             
         db.session.commit()
-        return jsonify({"Mensagem": "Credor atualizado com sucesso!"}), 201
+        return jsonify({"Mensagem": "Credor atualizado com sucesso!"}), 200
 
-    except Exception as e:
+    except SQLAlchemyError as e:
+        db.session.rollback()
         return jsonify({"erro": f"Erro ao atualizar o credor: {str(e)}"}), 500
-    
+    except Exception as e:
+        return jsonify({"erro": f"Erro inesperado: {str(e)}"}), 500
 
 
 

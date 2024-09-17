@@ -1,7 +1,7 @@
 from flask import jsonify, request,Blueprint
 from .models import db,ContaAPagar,Credor 
-from .utils.validacoes import valida_dados_contas_a_pagar,valida_data_pagamento,valida_data_vencimento,valida_valor
-from datetime import datetime
+from .utils.validacoes import valida_dados_contas_a_pagar,valida_data_pagamento,valida_data_vencimento,valida_valor,valida_status
+from datetime import datetime, date
 
 
 
@@ -11,26 +11,37 @@ contas_bp = Blueprint('contas_bp', __name__)
 
 @contas_bp.route('/', methods=['GET'])
 def listar_contas():
-
-# FILTRAGEM POR DATA INCORRETA
     data_vencimento = request.args.get('data_vencimento')
     data_pagamento = request.args.get('data_pagamento')
-
-    credores_query = Credor.query.join(Credor.contas) 
+    cnpj = request.args.get('cnpj')
+    status = request.args.get('status')  # Novo filtro de status
+    
+    contas_query = ContaAPagar.query 
     if data_vencimento:
-        credores_query = credores_query.filter(ContaAPagar.data_vencimento == data_vencimento)  
+        data_vencimento_date = datetime.strptime(data_vencimento, '%Y-%m-%d').date()
+        contas_query = contas_query.filter(ContaAPagar.data_vencimento == data_vencimento_date)      
     if data_pagamento:
         data_pagamento_date = datetime.strptime(data_pagamento, '%Y-%m-%d').date()
-        credores_query = credores_query.filter(ContaAPagar.data_pagamento == data_pagamento_date)
-    credores = credores_query.all()
-
-    response = []
-    for credor in credores:
-        empresa = {'nome':credor.nome,'cnpj':credor.cnpj}
-        contas = [{'id':conta.id,'valor': conta.valor, 'descricao': conta.descricao,'data_vencimento':conta.data_vencimento,'data_pagamento':conta.data_pagamento} for conta in credor.contas]
-        if len(contas) > 0:
-            response.append({'empresa': empresa, 'contas': contas})
-    return response
+        contas_query = contas_query.filter(ContaAPagar.data_pagamento == data_pagamento_date)      
+    if cnpj:
+        contas_query = contas_query.filter(ContaAPagar.cnpj == cnpj)     
+    if status:
+        contas_query = contas_query.filter(ContaAPagar.status == status)  # Filtra pelo status   
+    contas = contas_query.all()   
+    response = [
+        {
+            'cnpj': conta.cnpj,
+            'id': conta.id,
+            'valor': conta.valor,
+            'descricao': conta.descricao,
+            'data_vencimento': conta.data_vencimento,
+            'status': conta.status,
+            'data_pagamento': conta.data_pagamento
+        }
+        for conta in contas
+    ]
+    
+    return jsonify(response)  
 
 
 
@@ -141,6 +152,9 @@ def pagar_conta(id):
     try:
         data_pagamento = dados.get('data_pagamento')
         valor = dados.get('valor')
+        status = dados.get('status')
+        if not status:
+            return jsonify({"erro": "Status  é obrigatório!"}), 400
         if not data_pagamento:
             return jsonify({"erro": "Data de pagamento é obrigatória!"}), 400
         if not valor:
@@ -148,8 +162,10 @@ def pagar_conta(id):
         
         valida_data_pagamento(data_pagamento)
         valida_valor(valor)
+        valida_status(status)
         conta.data_pagamento = data_pagamento
         conta.valor = valor
+        conta.status = status
         db.session.commit()
 
         return jsonify({"Mensagem": "Pagamento efetuado com sucesso!"}), 200
@@ -158,7 +174,26 @@ def pagar_conta(id):
         return jsonify({"erro": f"Erro ao pagar a conta: {str(e)}"}), 500       
         
     
+@contas_bp.route('/atualizarStatus/<int:id>' ,methods=['PATCH'])  
+def atualizarStatus(id):
+    conta = ContaAPagar.query.get(id)
+    if not conta:
+        return jsonify({"Mensagem": "Conta não encontrada!"}), 404
 
+    dados = request.json
+    try:
+        status = dados.get('status')
+        if not status:
+            return jsonify({"erro": "Status  é obrigatório!"}), 400
+        valida_status(status)
+        conta.status = status
+        db.session.commit()
+
+        return jsonify({"Mensagem": "Atualização efetuada com sucesso!"}), 200
+
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao atualizar a conta: {str(e)}"}), 500   
+        
 @contas_bp.route('/remover/<int:id>', methods=['DELETE'])
 def deletar_conta(id):
     conta = ContaAPagar.query.get(id)
@@ -176,3 +211,28 @@ def deletar_conta(id):
 
     
 
+# @contas_bp.route('/atualizar-contas-atrasadas', methods=['GET'])
+# def atualizar_contas_atrasadas():
+#     try:
+#         # Obter a data atual
+#         data_atual = date.today()
+        
+#         # Buscar todas as contas que estão vencidas e ainda não estão marcadas como "ATRASADA"
+#         contas_vencidas = ContaAPagar.query.filter(
+#             ContaAPagar.data_vencimento < data_atual,
+#             ContaAPagar.status != 'ATRASADA',
+#             ContaAPagar.data_pagamento.is_(None)  # Apenas contas não pagas
+#         ).all()
+        
+#         # Atualizar o status dessas contas para "ATRASADA"
+#         for conta in contas_vencidas:
+#             conta.status = 'ATRASADA'
+        
+#         # Salvar as mudanças no banco de dados
+#         db.session.commit()
+        
+#         return jsonify({"Mensagem": f"{len(contas_vencidas)} contas atualizadas como ATRASADA!"}), 200
+    
+#     except Exception as e:
+#         db.session.rollback()
+#         return jsonify({"erro": f"Erro ao atualizar contas: {str(e)}"}), 500

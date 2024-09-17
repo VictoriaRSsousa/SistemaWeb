@@ -68,32 +68,33 @@ export default {
   },
   methods: {
     async adicionarCredor() {
-      try {
-        const response = await fetch(
-          "http://127.0.0.1:5000/credores/adicionar",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(this.novoCredor),
-          }
-        );
-        const result = await response.json();
-        console.log(result);
-
-        alert(result.Mensagem);
-        this.router.push("/listarCredores");
-
-        this.novoCredor = {
-          cnpj: "",
-          nome: "",
-          endereco: "",
-          telefone: "",
-          email: "",
-        };
-      } catch (error: any) {
-        alert("Erro ao adicionar credor: " + error.message);
-      }
-    },
+  try {
+    const response = await fetch("http://127.0.0.1:5000/credores/adicionar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.novoCredor),
+    });
+    const result = await response.json();
+    if (response.ok) {
+      alert(result.Mensagem || 'Credor adicionado com sucesso!');
+      this.router.push("/listarCredores");
+      
+      this.novoCredor = {
+        cnpj: "",
+        nome: "",
+        endereco: "",
+        telefone: "",
+        email: "",
+      };
+    } else {
+      const errorMessage = result.Mensagem || 'Erro desconhecido ao adicionar o credor.';
+      alert('Erro ao adicionar credor: ' + errorMessage);
+    }
+  } catch (error: any) {
+    alert('Erro ao adicionar credor: ' + (error.message || 'Erro desconhecido'));
+  }
+}
+,
   },
 };
 </script>
