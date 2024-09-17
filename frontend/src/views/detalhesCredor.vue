@@ -26,13 +26,14 @@
 </template>
 
 <script lang="ts">
-import { useRoute } from 'vue-router';
+import { useRoute,useRouter } from 'vue-router';
 
 export default {
   name: 'detalhesCredor',
   data() {
     return {
       route: useRoute(),
+      router: useRouter(),
       credor: {} as any,
     };
   },
@@ -42,16 +43,16 @@ export default {
         const response = await fetch(`http://127.0.0.1:5000/credores/${this.route.params.cnpj}`);
         const data = await response.json();
         this.credor = data;
-      } catch (error) {
-        console.error(`Erro ao buscar o credor: ${error.message}`);
+      } catch (error:any) {
+        console.error(`Erro ao buscar o credor: ${error.Mensagem}`);
       }
     },
     async apagarCredor() {
       try {
         await fetch(`http://127.0.0.1:5000/credores/remover/${this.route.params.cnpj}`, { method: 'DELETE' });
-        this.$router.push('/listarCredores');
-      } catch (error) {
-        console.error(`Erro ao apagar o credor: ${error.message}`);
+        this.router.push('/listarCredores');
+      } catch (error:any) {
+        console.error(`Erro ao apagar o credor: ${error.Mensagem}`);
       }
     },
   },

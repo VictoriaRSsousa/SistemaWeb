@@ -125,6 +125,8 @@ export default {
 .about-button {
   background-color: #f39c12;
   color: white;
+  width: 13vw;
+  min-width: 150px;
 }
 
 .about-button:hover {

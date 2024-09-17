@@ -1,12 +1,6 @@
 from flask import jsonify, request,Blueprint
-
-from flask import jsonify, request,Blueprint
 from .models import db,Credor 
-from .utils.validacoes import valida_cnpj
-
-
-
-from utils.validacoes import valida_dados_credor
+from .utils.validacoes import valida_cnpj,valida_dados_credor,valida_email,valida_endereco,valida_nome,valida_telefone
 
 credores_bp = Blueprint('credores_bp', __name__)
 
@@ -49,37 +43,36 @@ def selecionar_credor_por_id(cnpj):
         }
         return  response, 201
     else:
-       return jsonify({"mensagem": "Credor não encontrado"}), 400
+       return jsonify({"Mensagem": "Credor nao encontrado"}), 400
     
 
 @credores_bp.route('/adicionar', methods=['POST'])
 def adicionar_credor():
-    dados = request.json
-    
-    if not request.json or 'cnpj' not in request.json or 'nome' not in request.json or 'endereco' not in request.json  or 'telefone' not in request.json or  'email' not in request.json :
-        return jsonify({"mensagem": "Preencha todos os campos"}), 400
-    
-    valida_dados_credor(dados)
-    try: 
-        credor = Credor.query.get(dados['cnpj'])
-        if  credor:
-            return jsonify({"mensagem": "Credor já cadastrado!"}), 400
+    if not request.json:
+        return jsonify({"Mensagem": "Dados inválidos"}), 400
+
+    try:
+        dados = request.json
+        erro = valida_dados_credor(dados)
+        if erro:
+            return jsonify(erro), 400  # Retorna o erro encontrado
+        
+        # Lógica para adicionar o credor no banco de dados
         novo_credor = Credor(
             cnpj=dados['cnpj'],
             nome=dados['nome'],
             endereco=dados['endereco'],
-            telefone=dados.get('telefone'),
-            email=dados.get('email')
+            telefone=dados['telefone'],
+            email=dados['email']
         )
+        
         db.session.add(novo_credor)
         db.session.commit()
-        return jsonify({'message': 'Credor adicionado com sucesso!'}), 201
-        
-    except KeyError as error:
-        return jsonify({"mensagem": f"Campo obrigatório ausente: {error}"}), 400
+
+        return jsonify({"Mensagem": "Credor adicionado com sucesso!"}), 201
 
     except Exception as error:
-        return jsonify({"erro": f"Erro ao adicionar a Credor: {str(error)}"}), 500
+        return jsonify({"erro": f"Erro ao adicionar o credor: {str(error)}"}), 500
 
         
 
@@ -88,11 +81,10 @@ def adicionar_credor():
 def atualizar_credor(cnpj):
     credor = Credor.query.get(cnpj)
     if not credor:
-        return jsonify({"Mensagem": "Credor não encontrado!"}), 404  
+        return jsonify({"Mensagem": "Credor nao encontrado!"}), 404  
     dados = request.json
 
     valida_dados_credor(dados)
-    #NAO TA VALIDANDO CORRETAMENTE 
     try:       
         credor.nome = dados.get('nome', credor.nome)
         credor.endereco = dados.get('endereco', credor.endereco)
@@ -101,7 +93,7 @@ def atualizar_credor(cnpj):
         credor.cnpj = dados.get('cnpj', credor.cnpj)
             
         db.session.commit()
-        return jsonify({"mensagem": "Credor atualizado com sucesso!"}), 201
+        return jsonify({"Mensagem": "Credor atualizado com sucesso!"}), 201
 
     except Exception as e:
         return jsonify({"erro": f"Erro ao atualizar o credor: {str(e)}"}), 500
@@ -114,11 +106,11 @@ def deletar_credor(cnpj):
     try:
         credor = Credor.query.get(cnpj)
         if not credor:
-            return jsonify({'error': 'Credor não encontrado'}), 404
+            return jsonify({'error': 'Credor nao encontrado'}), 404
         
         db.session.delete(credor)
         db.session.commit()
-        return jsonify({"message": "Credor deletador com sucesso!"}), 200
+        return jsonify({"Mensagem": "Credor deletador com sucesso!"}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

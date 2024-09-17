@@ -76,16 +76,12 @@ export default {
           const dia = (data.getDate()+1).toString().padStart(2, '0')
           const mes = (data.getMonth() + 1).toString().padStart(2, '0')
           this.formattedDate = `${ano}-${mes}-${dia}`  
-          console.log(data);
 
-          
-          console.log(this.formattedDate);
-          
           
         }
 
       } catch (error: any) {
-        console.error(`Erro ao buscar a conta: ${error.message}`);
+        console.error(`Erro ao buscar a conta: ${error.Mensagem}`);
       }
     },
     async pagarConta() {
@@ -97,7 +93,7 @@ export default {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ data_pagamento: new Date().toISOString().split('T')[0], valor: this.totalAPagar }), // Formata a data para ISO 8601
+            body: JSON.stringify({ data_pagamento: new Date().toISOString().split('T')[0], valor: this.totalAPagar }), 
           }
         );
 
@@ -111,7 +107,7 @@ export default {
         alert("Pagamento efetuado com sucesso!");
         window.location.reload()
       } catch (error: any) {
-        console.error(`Erro ao pagar a conta: ${error.message}`);
+        console.error(`Erro ao pagar a conta: ${error.Mensagem}`);
       }
     },
     async apagarConta() {
@@ -129,7 +125,7 @@ export default {
 
         this.conta = data;
       } catch (error: any) {
-        console.error(`Erro ao buscar a conta: ${error.message}`);
+        console.error(`Erro ao buscar a conta: ${error.Mensagem}`);
       }
     },
     calcularTotal() {

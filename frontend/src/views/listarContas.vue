@@ -8,17 +8,17 @@
       </RouterLink>
     </header>
 
-    <div id="listarContasContent">
-      <div class="filter-group">
+    <div id="listarContasContent" class="m-4 ">
+      <div class="filter-group ">
         <div class="filter-item">
-          <label for="dataPagamento">Data de pagamento:</label>
-          <input @change="listarContas" type="date" v-model="dataPagamento" id="dataPagamento">
+          <label for="dataPagamento" class="font-bold">Data de pagamento:</label>
+          <input @change="listarContas" type="date" v-model="dataPagamento" id="dataPagamento" class="p-1">
         </div>
         <div class="filter-item">
-          <label for="dataVencimento">Data de vencimento:</label>
-          <input @change="listarContas" v-model="dataVencimento" type="date" id="dataVencimento">
+          <label for="dataVencimento" class="font-bold">Data de vencimento:</label>
+          <input @change="listarContas" v-model="dataVencimento" type="date" id="dataVencimento"  class="p-1">
         </div>
-        <button @click="limparFiltro" class="navButton">Limpar filtro</button>
+        <button @click="limparFiltro" class="navButton mt-4 font-bold">Limpar filtro</button>
       </div>
 
       <div v-for="(contaGrupo, index) in resultado" :key="index" class="conta-grupo">
@@ -62,7 +62,7 @@ export default {
         const result = await response.json();
         this.resultado = result;
       } catch (error: any) {
-        alert("Erro ao listar contas: " + error.message);
+        alert("Erro ao listar contas: " + error.Mensagem);
       }
     },
     async limparFiltro(){
@@ -76,7 +76,7 @@ export default {
         const result = await response.json();
         this.resultado = result;
       } catch (error: any) {
-        alert("Erro ao listar contas: " + error.message);
+        alert("Erro ao listar contas: " + error.Mensagem);
       }
     },
     verificarPagamento(dataPagamento: string, dataVencimento: string) {
@@ -194,8 +194,9 @@ export default {
 }
 
 .navButton {
+  height: 40px;
   display: inline-flex; 
-  padding: 10px 20px;
+  padding: 4px 20px;
   font-size: 16px; 
   min-width: 120px; 
   background-color: #ffffff;

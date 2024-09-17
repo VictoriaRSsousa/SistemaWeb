@@ -74,7 +74,7 @@ export default {
           body: JSON.stringify(this.novaConta),
         });
         const result = await response.json();
-        alert(result.mensagem);
+        alert(result.Mensagem);
         this.novaConta = {
           cnpj: "",
           valor: 0,

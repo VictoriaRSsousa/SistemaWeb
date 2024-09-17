@@ -44,33 +44,13 @@ def valida_juros(juros):
     return None
         
 def valida_dados_contas_a_pagar(dados):
-    erros = []
-
-    erro = valida_cnpj(dados.get('cnpj'))
-    if erro: erros.append(erro)
-
-    erro = valida_valor(dados.get('valor'))
-    if erro: erros.append(erro)
-
-    erro = valida_descricao(dados.get('descricao'))
-    if erro: erros.append(erro)
-
-    erro = valida_data_vencimento(dados.get('data_vencimento'))
-    if erro: erros.append(erro)
-
-    erro = valida_multa(dados.get('multa'))
-    if erro: erros.append(erro)
-
-    erro = valida_data_pagamento(dados.get('data_pagamento'))
-    if erro: erros.append(erro)
-
-    erro = valida_juros(dados.get('juros'))
-    if erro: erros.append(erro)
-
-    if erros:
-        return jsonify({"Erros": erros})
-
-    return jsonify({"Mensagem": "Dados válidos!"})
+    valida_cnpj(dados.get('cnpj'))
+    valida_valor(dados.get('valor'))
+    valida_descricao(dados.get('descricao'))
+    valida_data_vencimento(dados.get('data_vencimento'))
+    valida_multa(dados.get('multa'))
+    valida_data_pagamento(dados.get('data_pagamento'))
+    valida_juros(dados.get('juros'))
 
 
 def valida_nome(nome):
@@ -102,26 +82,9 @@ def valida_telefone(telefone):
         return {"Mensagem": "Telefone inválido!"}
     return None
 
-def valida_dados_credor(dados):
-    erros=[]
-    
-    erro = valida_cnpj(dados.get('cnpj'))
-    if erro: erros.append(erro)
-
-    erro = valida_nome(dados.get('nome'))
-    if erro: erros.append(erro)
-
-    erro = valida_endereco(dados.get('endereco'))
-    if erro: erros.append(erro)
-
-    erro = valida_telefone(dados.get('telefone'))
-    if erro: erros.append(erro)
-
-    erro = valida_email(dados.get('email'))
-    if erro: erros.append(erro)
-
-
-    if erros:
-        return jsonify({"Erros": erros})
-
-    return jsonify({"Mensagem": "Dados válidos!"})
+# def valida_dados_credor(dados):
+#     valida_cnpj(dados.get('cnpj'))
+#     valida_nome(dados.get('nome'))
+#     valida_endereco(dados.get('endereco'))
+#     valida_telefone(dados.get('telefone'))
+#     valida_email(dados.get('email'))

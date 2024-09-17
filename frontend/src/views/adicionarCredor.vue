@@ -20,11 +20,21 @@
         </div>
         <div class="form-group">
           <label for="endereco">Endereço:</label>
-          <input v-model="novoCredor.endereco" type="text" id="endereco" required />
+          <input
+            v-model="novoCredor.endereco"
+            type="text"
+            id="endereco"
+            required
+          />
         </div>
         <div class="form-group">
           <label for="telefone">Telefone:</label>
-          <input v-model="novoCredor.telefone" type="text" id="telefone" required />
+          <input
+            v-model="novoCredor.telefone"
+            type="text"
+            id="telefone"
+            required
+          />
         </div>
         <div class="form-group">
           <label for="email">E-mail:</label>
@@ -39,63 +49,61 @@
 </template>
 
 <script lang="ts">
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter } from "vue-router";
 
 export default {
-  name: 'adicionarCredor',
-  data(){
-
-    return{
+  name: "adicionarCredor",
+  data() {
+    return {
       route: useRoute(),
       router: useRouter(),
-      novoCredor:{
-        cnpj:"",
-        nome:"",
-        endereco:"",
-        telefone:"", 
-        email:"" 
-      }
-    }
+      novoCredor: {
+        cnpj: "",
+        nome: "",
+        endereco: "",
+        telefone: "",
+        email: "",
+      },
+    };
   },
-  methods:{
+  methods: {
     async adicionarCredor() {
       try {
-        const response = await fetch("http://127.0.0.1:5000/credores/adicionar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(this.novoCredor),
-      });
-      const result = await response.json();
-      alert (result.mensagem);
-      this.novoCredor = {
+        const response = await fetch(
+          "http://127.0.0.1:5000/credores/adicionar",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(this.novoCredor),
+          }
+        );
+        const result = await response.json();
+        console.log(result);
 
-        cnpj:"",
-        nome:"",
-        endereco:"",
-        telefone:"", 
-        email:"" 
+        alert(result.Mensagem);
+        this.router.push("/listarCredores");
 
-      };
-      this.router.push("/listarCredores");
-
-
-      }catch (error: any) {
-      alert("Erro ao adicionar credor: " + error.message);
-    }
-      
-      
-    }
-  }
-
+        this.novoCredor = {
+          cnpj: "",
+          nome: "",
+          endereco: "",
+          telefone: "",
+          email: "",
+        };
+      } catch (error: any) {
+        alert("Erro ao adicionar credor: " + error.message);
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css");
 
 .page-container {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;

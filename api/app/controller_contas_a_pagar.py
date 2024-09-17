@@ -53,18 +53,23 @@ def selecionar_conta_por_id(id):
         }
         return response, 201
     else:
-       return jsonify({"mensagem": "Conta não encontrada"}), 400
+       return jsonify({"Mensagem": "Conta não encontrada"}), 400
 
-@contas_bp.route('/adicionar' ,methods=['POST'])
+@contas_bp.route('/adicionar', methods=['POST'])
 def adicionar_conta():
-    if not request.json or 'cnpj' not in request.json or 'data_vencimento' not in request.json or 'valor' not in request.json  or 'juros' not in request.json or  'descricao' not in request.json :
-        return jsonify({"mensagem": "Preencha todos os campos"}), 400
-    try:   
-        dados = request.json  
-        valida_dados_contas_a_pagar(dados)  
+    if not request.json or 'cnpj' not in request.json or 'data_vencimento' not in request.json or 'valor' not in request.json or 'juros' not in request.json or 'descricao' not in request.json:
+        return jsonify({"Mensagem": "Preencha todos os campos"}), 400
+    
+    try:
+        dados = request.json
+        erro = valida_dados_contas_a_pagar(dados)  
+        if erro:
+            return jsonify(erro), 400 
+        
         credor = Credor.query.get(dados['cnpj'])
         if not credor:
-            return jsonify({"mensagem": "Credor não cadastrado!"}), 400
+            return jsonify({"Mensagem": "Credor não cadastrado!"}), 400
+        
         nova_conta = ContaAPagar(
             valor=dados['valor'],
             descricao=dados['descricao'],
@@ -78,13 +83,14 @@ def adicionar_conta():
         db.session.add(nova_conta)
         db.session.commit()
 
-        return jsonify({"mensagem": "Conta adicionada com sucesso!"}), 201
+        return jsonify({"Mensagem": "Conta adicionada com sucesso!"}), 201
 
     except KeyError as error:
-        return jsonify({"mensagem": f"Campo obrigatório ausente: {error}"}), 400
+        return jsonify({"Mensagem": f"Campo obrigatório ausente: {error}"}), 400
 
     except Exception as error:
         return jsonify({"erro": f"Erro ao adicionar a conta: {str(error)}"}), 500
+
     
     
     
@@ -100,7 +106,7 @@ def atualizar_conta(id):
         if 'cnpj' in dados:
             credor = Credor.query.get(dados['cnpj'])
             if not credor:
-                return jsonify({"mensagem": "Credor não cadastrado!"}), 400
+                return jsonify({"Mensagem": "Credor não cadastrado!"}), 400
         
         if 'valor' in dados:
             conta.valor = dados['valor']
@@ -119,7 +125,7 @@ def atualizar_conta(id):
             
         db.session.commit()    
             
-        return jsonify({"mensagem": "Conta atualizada com sucesso!"}), 201
+        return jsonify({"Mensagem": "Conta atualizada com sucesso!"}), 201
 
     except Exception as e:
         return jsonify({"erro": f"Erro ao atualizar a conta: {str(e)}"}), 500 
@@ -146,7 +152,7 @@ def pagar_conta(id):
         conta.valor = valor
         db.session.commit()
 
-        return jsonify({"mensagem": "Pagamento efetuado com sucesso!"}), 200
+        return jsonify({"Mensagem": "Pagamento efetuado com sucesso!"}), 200
 
     except Exception as e:
         return jsonify({"erro": f"Erro ao pagar a conta: {str(e)}"}), 500       
@@ -162,11 +168,11 @@ def deletar_conta(id):
             db.session.commit()
             return jsonify({"Mensagem": "Conta deletada com sucesso"}), 201
         except KeyError as error:
-            return jsonify({"mensagem": f"Campo obrigatório ausente: {error}"}), 400
+            return jsonify({"Mensagem": f"Campo obrigatório ausente: {error}"}), 400
         except Exception as error:
             return jsonify({"erro": f"Erro ao deletar a conta: {str(error)}"}), 500     
     else:
-       return jsonify({"mensagem": "Conta não encontrada"}), 400
+       return jsonify({"Mensagem": "Conta não encontrada"}), 400
 
     
 

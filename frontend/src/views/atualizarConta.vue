@@ -80,7 +80,7 @@
           };
         }
       } catch (error:any) {
-        alert('Erro ao buscar conta: ' + error.message);
+        alert('Erro ao buscar conta: ' + error.Mensagem);
       }
     },
 
@@ -98,10 +98,10 @@
           alert('Conta atualizada com sucesso!');
           this.router.push(`/detalhesConta/${this.route.params.id}`);
         } else {
-          alert('Erro ao atualizar conta: ' + result.mensagem);
+          alert('Erro ao atualizar conta: ' + result.Mensagem);
         }
       } catch (error:any) {
-        alert('Erro ao atualizar conta: ' + error.message);
+        alert('Erro ao atualizar conta: ' + error.Mensagem);
       }
     },
     formatDate(dateString: string): string {

@@ -9,8 +9,12 @@ def valida_cnpj(cnpj):
     return None
 
 def valida_valor(valor):
-    if not (isinstance(valor, (int, float)) and valor >= 0):
+    if not isinstance(valor, (int, float)):  
+        print("nao é numero")
+        return {"Mensagem": "Valor inválido!"}   
+    if valor < 0:  
         return {"Mensagem": "Valor inválido!"}
+    
     return None
 
 def valida_descricao(descricao):
@@ -44,33 +48,35 @@ def valida_juros(juros):
     return None
         
 def valida_dados_contas_a_pagar(dados):
-    erros = []
-
     erro = valida_cnpj(dados.get('cnpj'))
-    if erro: erros.append(erro)
+    if erro:
+        return erro 
 
     erro = valida_valor(dados.get('valor'))
-    if erro: erros.append(erro)
+    if erro:
+        return erro  
 
     erro = valida_descricao(dados.get('descricao'))
-    if erro: erros.append(erro)
+    if erro:
+        return erro 
 
     erro = valida_data_vencimento(dados.get('data_vencimento'))
-    if erro: erros.append(erro)
+    if erro:
+        return erro 
 
     erro = valida_multa(dados.get('multa'))
-    if erro: erros.append(erro)
+    if erro:
+        return erro 
 
     erro = valida_data_pagamento(dados.get('data_pagamento'))
-    if erro: erros.append(erro)
+    if erro:
+        return erro  
 
     erro = valida_juros(dados.get('juros'))
-    if erro: erros.append(erro)
+    if erro:
+        return erro  
 
-    if erros:
-        return jsonify({"Erros": erros})
-
-    return jsonify({"Mensagem": "Dados válidos!"})
+    return None  
 
 
 def valida_nome(nome):
@@ -98,30 +104,32 @@ def valida_endereco(endereco):
     return None
 
 def valida_telefone(telefone):
-    if not (isinstance(telefone, (str)) and len (telefone) < 8 and telefone.isdigit()):
+    if not (isinstance(telefone, (str)) and len (telefone) > 8 and telefone.isdigit()):
         return {"Mensagem": "Telefone inválido!"}
     return None
 
 def valida_dados_credor(dados):
-    erros=[]
-    
     erro = valida_cnpj(dados.get('cnpj'))
-    if erro: erros.append(erro)
-
+    if erro:
+        return erro 
+    
     erro = valida_nome(dados.get('nome'))
-    if erro: erros.append(erro)
-
+    if erro:
+        return erro  
+    
     erro = valida_endereco(dados.get('endereco'))
-    if erro: erros.append(erro)
-
+    if erro:
+        return erro  
+    
     erro = valida_telefone(dados.get('telefone'))
-    if erro: erros.append(erro)
-
+    if erro:
+        return erro
+    
     erro = valida_email(dados.get('email'))
-    if erro: erros.append(erro)
+    if erro:
+        return erro 
+    
+    return None  
 
 
-    if erros:
-        return jsonify({"Erros": erros})
 
-    return jsonify({"Mensagem": "Dados válidos!"})

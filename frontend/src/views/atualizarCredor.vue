@@ -69,7 +69,7 @@
         const result = await response.json();
         if (response.ok) {
           alert('Credor atualizado com sucesso!');
-          this.router.push(`/detalhesCredor/${this.route.params.cnpj}`);
+          this.router.push(`/detalhesCredor/${this.credor.cnpj}`);
         } else {
           alert('Erro ao atualizar conta: ' + result.mensagem);
         }

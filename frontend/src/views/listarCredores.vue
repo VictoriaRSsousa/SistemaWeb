@@ -1,5 +1,5 @@
 <template>
-  <div id="listarCredoresPage">
+  <div id="listarCredoresPage" >
     <header class="header">
       <h1>Listar Credores</h1>
       <RouterLink to="/" class="navButton">
@@ -8,11 +8,11 @@
       </RouterLink>
     </header>
 
-    <div id="listarCredoresContent">
-      <div class="filter-group">
-        <div class="filter-item">
+    <div id="listarCredoresContent" class="px-3">
+      <div class="filter-group ">
+        <div class="filter-item w-[20vw]">
           <label for="cnpjCredor">CNPJ:</label>
-          <input v-model="cnpjCredor" type="text" id="cnpjCredor">
+          <input v-model="cnpjCredor" type="text" class="w-full " id="cnpjCredor">
         </div>
         <button @click="listarCredores()" class="search-button">Pesquisar</button>
       </div>
@@ -116,24 +116,25 @@ body {
   transform: translateY(0);
 }
 
-/* Filtros e Contas */
+
 .filter-group {
   display: flex;
   justify-content: flex-end;
-  align-items: center; /* Alinhar verticalmente os itens */
+  align-items: center; 
   gap: 10px;
-  margin-bottom: 20px; /* Aumentar a margem inferior para separação */
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .filter-item {
   display: flex;
   flex-direction: column;
-  border: 1px solid black; /* Contorno preto de 1 pixel */
-  padding: 10px; /* Espaçamento interno */
-  background-color: #ffffff; /* Cor de fundo dos filtros */
-  border-radius: 8px; /* Bordas arredondadas para um visual mais suave */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
-  margin-right: 10px; /* Espaçamento à direita para separar do botão */
+  border: 1px solid black; 
+  padding: 10px; 
+  background-color: #ffffff; 
+  border-radius: 8px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  margin-right: 10px; 
 }
 
 .filter-item label {
@@ -141,11 +142,10 @@ body {
 }
 
 .filter-item input {
-  padding: 8px;
+  padding: 5px;
   border: 1px solid #ccc; /* Bordas do input */
   border-radius: 4px; /* Bordas arredondadas para o input */
   font-size: 16px;
-  width: 150px; /* Largura fixa para alinhar com o botão */
 }
 
 .search-button {
