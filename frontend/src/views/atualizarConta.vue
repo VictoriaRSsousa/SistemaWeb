@@ -55,9 +55,10 @@
           descricao: '',
           valor: 0,
           data_vencimento: '',
-          data_pagamento: undefined as any,
+          data_pagamento: null,
           multa: 0,
           juros: 0,
+          status: '',
           credor: {
                 nome: '',
                 cnpj:'',
@@ -70,13 +71,14 @@
 
     async fetchConta()  {
       try {
+
         const response = await fetch(`http://127.0.0.1:5000/contas/${this.route.params.id}`);
         const data = await response.json();
         if (data) {
           this.conta = {
             ...data,
             data_vencimento: this.formatDate(data.data_vencimento),
-            data_pagamento : this.formatDate(data.data_pagamento) // Converte a data para o formato YYYY-MM-DD
+            data_pagamento : this.formatDate(data.data_pagamento) 
           };
         }
       } catch (error:any) {
@@ -85,7 +87,12 @@
     },
 
     async editarConta (){
+      if(!this.conta.data_pagamento){
+          this.conta.data_pagamento = null
+        }
+      this.conta. status = this.verificarPagamento(this.conta.data_pagamento,this.conta.data_vencimento)
       try {
+
         const response = await fetch(`http://127.0.0.1:5000/contas/atualizar/${this.route.params.id}`, {
           method: 'PUT',
           headers: {
@@ -108,13 +115,24 @@
       if (!dateString) return '';
       const date = new Date(dateString);
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses começam do 0
+      const month = String(date.getMonth() + 1).padStart(2, '0'); 
       const day = String(date.getDate()+1).padStart(2, '0');
       return `${year}-${month}-${day}`;
     },
-  },
-  computed:{
-   
+    verificarPagamento(dataPagamento: any, dataVencimento: any) {
+      const vencimento = new Date(dataVencimento);
+      const hoje = new Date();
+
+      if (dataPagamento) {
+        const pagamento = new Date(dataPagamento);
+        if (pagamento > vencimento) {
+          return "PAGA";
+        }
+        return "PAGA"; 
+      } else {
+        return vencimento > hoje ? "ABERTA" : "ATRASADA";
+      }
+    },
   },
   mounted() {
       this.fetchConta()

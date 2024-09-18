@@ -18,7 +18,7 @@ def valida_valor(valor):
     return None
 
 def valida_status(status):
-    if not (isinstance(status, str) and len(status) > 3):
+    if not (isinstance(status, str)):
         return {"Mensagem": "Status inválida!"}
     return None
 

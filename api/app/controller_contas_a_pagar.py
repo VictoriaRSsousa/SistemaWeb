@@ -57,6 +57,7 @@ def selecionar_conta_por_id(id):
             'data_pagamento':conta.data_pagamento,
             'multa':conta.multa,
             'juros':conta.juros,
+            'status':conta.status,
             'credor': {
                 'nome': conta.credor.nome,
                 'cnpj':conta.cnpj,
@@ -88,7 +89,8 @@ def adicionar_conta():
             data_pagamento=dados.get('data_pagamento'),
             multa=dados.get('multa'),
             juros=dados.get('juros'),
-            cnpj=dados['cnpj']
+            cnpj=dados['cnpj'],
+            status = dados['status']
         )
         
         db.session.add(nova_conta)
@@ -133,6 +135,7 @@ def atualizar_conta(id):
             conta.juros = dados['juros']
         if 'cnpj' in dados:
             conta.cnpj = dados['cnpj']
+        conta.status = dados['status']    
             
         db.session.commit()    
             

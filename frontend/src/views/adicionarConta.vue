@@ -62,16 +62,22 @@ export default {
         multa: 0,
         juros: 0,
         data_pagamento: null,
+        status: ''
       },
     };
   },
   methods: {
     async adicionarConta() {
       try {
+        const status = this.verificarPagamento(this.novaConta.data_pagamento,this.novaConta.data_vencimento)
+        console.log(status);
+        if(!this.novaConta.data_pagamento){
+          this.novaConta.data_pagamento = null
+        }
         const response = await fetch("http://127.0.0.1:5000/contas/adicionar", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.novaConta),
+          body: JSON.stringify({...this.novaConta, status: status}),
         });
         const result = await response.json();
         alert(result.Mensagem);
@@ -83,12 +89,29 @@ export default {
           multa: 0,
           juros: 0,
           data_pagamento: null,
+          status: status,
         };
         this.router.push("/listarContas");
       } catch (error: any) {
         alert("Erro ao adicionar conta: " + error.message);
       }
     },
+
+    verificarPagamento(dataPagamento: any, dataVencimento: any) {
+      const vencimento = new Date(dataVencimento);
+      const hoje = new Date();
+
+      if (dataPagamento) {
+        const pagamento = new Date(dataPagamento);
+        if (pagamento > vencimento) {
+          return "PAGA";
+        }
+        return "PAGA"; 
+      } else {
+        return vencimento > hoje ? "ABERTA" : "ATRASADA";
+      }
+    },
+
     
   },
 };
