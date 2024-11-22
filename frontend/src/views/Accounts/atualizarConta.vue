@@ -90,7 +90,7 @@
       if(!this.conta.data_pagamento){
           this.conta.data_pagamento = null
         }
-      this.conta. status = this.verificarPagamento(this.conta.data_pagamento,this.conta.data_vencimento)
+      this.conta.status = this.verificarPagamento(this.conta.data_pagamento,this.conta.data_vencimento)
       try {
 
         const response = await fetch(`http://127.0.0.1:5000/contas/atualizar/${this.route.params.id}`, {
@@ -124,10 +124,6 @@
       const hoje = new Date();
 
       if (dataPagamento) {
-        const pagamento = new Date(dataPagamento);
-        if (pagamento > vencimento) {
-          return "PAGA";
-        }
         return "PAGA"; 
       } else {
         return vencimento > hoje ? "ABERTA" : "ATRASADA";

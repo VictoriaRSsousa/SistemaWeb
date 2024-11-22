@@ -48,7 +48,7 @@ def selecionar_credor_por_id(cnpj):
        return jsonify({"Mensagem": "Credor nao encontrado"}), 400
     
 
-@credores_bp.route('/adicionar', methods=['POST'])
+@credores_bp.route('/create', methods=['POST'])
 def adicionar_credor():
     if not request.json:
         return jsonify({"Mensagem": "Dados inválidos"}), 400
@@ -78,7 +78,7 @@ def adicionar_credor():
         
 
     
-@credores_bp.route('/atualizar/<string:cnpj>', methods=['PUT'])
+@credores_bp.route('/update/<string:cnpj>', methods=['PUT'])
 def atualizar_credor(cnpj):
     credor = Credor.query.get(cnpj)
     if not credor:
@@ -108,7 +108,7 @@ def atualizar_credor(cnpj):
 
 
 
-@credores_bp.route('/deletar/<string:cnpj>', methods=['DELETE'])
+@credores_bp.route('/delete/<string:cnpj>', methods=['DELETE'])
 def deletar_credor(cnpj):
     try:
         credor = Credor.query.get(cnpj)

@@ -4,7 +4,8 @@ import re
 
 ##validação de cnpj
 def valida_cnpj(cnpj):
-    if not (isinstance(cnpj, str) and len(cnpj) == 14 and cnpj.isdigit()):
+    pattern = r'^(\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}|\d{14})$'
+    if not re.match(pattern, cnpj):
         return {"Mensagem": "CNPJ inválido!"}
     return None
 

@@ -2,6 +2,14 @@ from flask import jsonify, request,Blueprint
 from .models import db,ContaAPagar,Credor 
 from .utils.validacoes import valida_dados_contas_a_pagar,valida_data_pagamento,valida_data_vencimento,valida_valor,valida_status
 from datetime import datetime, date
+from apscheduler.schedulers.background import BackgroundScheduler
+from app import create_app
+from sqlalchemy import text
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+
+
+
 
 
 
@@ -14,7 +22,7 @@ def listar_contas():
     data_vencimento = request.args.get('data_vencimento')
     data_pagamento = request.args.get('data_pagamento')
     cnpj = request.args.get('cnpj')
-    status = request.args.get('status')  # Novo filtro de status
+    status = request.args.get('status') 
     
     contas_query = ContaAPagar.query 
     if data_vencimento:
@@ -26,7 +34,7 @@ def listar_contas():
     if cnpj:
         contas_query = contas_query.filter(ContaAPagar.cnpj == cnpj)     
     if status:
-        contas_query = contas_query.filter(ContaAPagar.status == status)  # Filtra pelo status   
+        contas_query = contas_query.filter(ContaAPagar.status == status)  
     contas = contas_query.all()   
     response = [
         {
@@ -43,20 +51,18 @@ def listar_contas():
     
     return jsonify(response)  
 
-
-
 @contas_bp.route('/<int:id>', methods=['GET'])
 def selecionar_conta_por_id(id):
     conta = ContaAPagar.query.get(id)
     if conta:
         response = {
             'id':conta.id,
-            'valor': conta.valor,
+            'valor': float(conta.valor) if conta.valor else 0.0,
             'descricao': conta.descricao,
             'data_vencimento': conta.data_vencimento,
             'data_pagamento':conta.data_pagamento,
-            'multa':conta.multa,
-            'juros':conta.juros,
+            'multa':float(conta.multa) if conta.multa else 0.0,
+            'juros':float(conta.juros) if conta.juros else 0.0,
             'status':conta.status,
             'credor': {
                 'nome': conta.credor.nome,
@@ -66,8 +72,10 @@ def selecionar_conta_por_id(id):
         return response, 201
     else:
        return jsonify({"Mensagem": "Conta não encontrada"}), 400
+   
+   
 
-@contas_bp.route('/adicionar', methods=['POST'])
+@contas_bp.route('/create', methods=['POST'])
 def adicionar_conta():
     if not request.json or 'cnpj' not in request.json or 'data_vencimento' not in request.json or 'valor' not in request.json or 'juros' not in request.json or 'descricao' not in request.json:
         return jsonify({"Mensagem": "Preencha todos os campos"}), 400
@@ -107,7 +115,7 @@ def adicionar_conta():
     
     
     
-@contas_bp.route('/atualizar/<int:id>' ,methods=['PUT'])
+@contas_bp.route('/update/<int:id>' ,methods=['PUT'])
 def atualizar_conta(id):
     conta = ContaAPagar.query.get(id)
     if not conta:
@@ -145,7 +153,7 @@ def atualizar_conta(id):
         return jsonify({"erro": f"Erro ao atualizar a conta: {str(e)}"}), 500 
     
     
-@contas_bp.route('/pagar/<int:id>' ,methods=['PATCH'])  
+@contas_bp.route('/pay/<int:id>' ,methods=['PATCH'])  
 def pagar_conta(id):
     conta = ContaAPagar.query.get(id)
     if not conta:
@@ -177,7 +185,7 @@ def pagar_conta(id):
         return jsonify({"erro": f"Erro ao pagar a conta: {str(e)}"}), 500       
         
     
-@contas_bp.route('/atualizarStatus/<int:id>' ,methods=['PATCH'])  
+@contas_bp.route('/updateStatus/<int:id>' ,methods=['PATCH'])  
 def atualizarStatus(id):
     conta = ContaAPagar.query.get(id)
     if not conta:
@@ -197,7 +205,7 @@ def atualizarStatus(id):
     except Exception as e:
         return jsonify({"erro": f"Erro ao atualizar a conta: {str(e)}"}), 500   
         
-@contas_bp.route('/remover/<int:id>', methods=['DELETE'])
+@contas_bp.route('/delete/<int:id>', methods=['DELETE'])
 def deletar_conta(id):
     conta = ContaAPagar.query.get(id)
     if conta:
@@ -212,7 +220,27 @@ def deletar_conta(id):
     else:
        return jsonify({"Mensagem": "Conta não encontrada"}), 400
 
-    
+def verificar_status():
+    app = create_app()
+    today = date.today()
+    print(today)
+    with app.app_context():
+        db.session.execute(
+            text("UPDATE contas_a_pagar SET status = 'ATRASADA' WHERE status = 'ABERTA' AND data_vencimento < :today"),
+            {'today': today}
+        )
+        db.session.commit()
+    print("Verificação de status executada.")
+ 
+def start_scheduler():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(verificar_status, CronTrigger(hour=0, minute=0))
+    scheduler.start()
+    print("Scheduler iniciado. A função será executada diariamente às 00:00.")
+ 
+verificar_status() 
+start_scheduler()
+
 
 # @contas_bp.route('/atualizar-contas-atrasadas', methods=['GET'])
 # def atualizar_contas_atrasadas():

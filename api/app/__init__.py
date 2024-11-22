@@ -16,8 +16,8 @@ def create_app():
     from .controller_contas_a_pagar import contas_bp
 
     #app.register_blueprint(credor_bp, url_prefix='/credores')
-    app.register_blueprint(contas_bp, url_prefix='/contas')
-    app.register_blueprint(credores_bp,url_prefix='/credores')
+    app.register_blueprint(contas_bp, url_prefix='/accounts')
+    app.register_blueprint(credores_bp,url_prefix='/creditors')
 
     with app.app_context():
         db.create_all()

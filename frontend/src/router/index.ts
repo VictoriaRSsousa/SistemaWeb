@@ -1,67 +1,58 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../views/home.vue';
-import sobre from '../views/sobre.vue';
-import adicionarConta from '../views/adicionarConta.vue';
-import atualizarConta from '../views/atualizarConta.vue';
-import listarContas from '../views/listarContas.vue';
-import listarCredores from '../views/listarCredores.vue';
-import adicionarCredor from '../views/adicionarCredor.vue';
-import atualizarCredor from '../views/atualizarCredor.vue';
-import detalhesConta from '../views/detalhesConta.vue';
-import detalhesCredor from '../views/detalhesCredor.vue';
 
 //Rotas ...
 const routes = [
   {
     path: '/',
-    component: Home,
+    component: ()=> import('../views/Home/home.vue'),
     name: 'Home',
   },
   {
     path: '/listarContas',
-    component: listarContas,
+    component: ()=> import('../views/Accounts/list.vue'),
     name: 'listarContas',
   },
   {
     path: '/sobre',
-    component: sobre,
+    component: ()=> import('../views/About/about.vue'),
     name: 'sobre',
   },
   {
     path: '/adicionarConta',
-    component: adicionarConta,
+    component: ()=> import('../views/Accounts/form.vue'),
     name: 'adicionarConta',
   },
   {
     path: '/atualizarConta/:id',
-    component: atualizarConta,
+    component: ()=> import('../views/Accounts/form.vue'),
     name: 'atualizarConta'
   },
   {
     path: '/listarCredores',
-    component: listarCredores,
+    component: ()=> import('../views/Creditor/list.vue'),
     name: 'listarCredores'
   },
   {
     path: '/adicionarCredor',
-    component: adicionarCredor,
+    component: ()=> import('../views/Creditor/form.vue'),
     name: 'adicionarCredor'
   },
   {
     path: '/atualizarCredor/:cnpj',
-    component: atualizarCredor,
+    component: ()=> import('../views/Creditor/form.vue'),
     name: 'atualizarCredor'
   },
   {
     path: '/detalhesConta/:id',
-    component: detalhesConta,
+    component: ()=> import('../views/Accounts/details.vue'),
     name: 'detalhesConta'
   },
   {
     path: '/detalhesCredor/:cnpj',
-    component: detalhesCredor,
+    component: ()=> import('../views/Creditor/details.vue'),
     name: 'detalhesCredor'
-  }
+  },
+
 ];
 
 // Adicionar rota credor

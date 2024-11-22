@@ -5,7 +5,9 @@ module.exports = {
     "./src/**/*.{vue,js,ts,jsx,tsx}", // Caminhos dos seus arquivos Vue.js
   ],
   theme: {
-    extend: {},
+    extend: {
+      
+    },
   },
   plugins: [],
 };

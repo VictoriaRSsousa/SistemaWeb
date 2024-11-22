@@ -11,10 +11,10 @@
     <div id="listarCredoresContent" class="px-3">
       <div class="filter-group ">
         <div class="filter-item w-[20vw]">
-          <label for="cnpjCredor">CNPJ:</label>
-          <input v-model="cnpjCredor" type="text" class="w-full " id="cnpjCredor">
+          <label for="cnpjCredor" class="text-black">CNPJ:</label>
+          <input v-model="query.cnpj" @keyup.enter="getAllCreditors" type="text" class="input-field " id="cnpjCredor">
         </div>
-        <button @click="listarCredores()" class="search-button">Pesquisar</button>
+        <!-- <button @click="listarCredores()" class="search-button">Pesquisar</button> -->
       </div>
 
       <div v-for="(credor, index) in credores" :key="index" class="credor-box">
@@ -34,6 +34,8 @@
 
 <script lang="ts">
 import { useRoute, useRouter } from "vue-router";
+import { CreditorService } from "./creditor.service";
+import QueryParams from "../../models/queryParams.model";
 export default {
   data() {
     return {
@@ -41,21 +43,27 @@ export default {
       router: useRouter(),
       credores: [] as any,
       cnpjCredor: "",
+      query: new QueryParams()
     };
   },
   methods: {
-    async listarCredores() {
-      const url = new URL("http://127.0.0.1:5000/credores/");
-      if (this.cnpjCredor) {
-        url.searchParams.append("cnpj", this.cnpjCredor);
-      }
-      const response = await fetch(url.toString());
-      const result = await response.json();
-      this.credores = result;
+
+    getAllCreditors(){
+      this.service.creditors.pipe().subscribe({
+        next:(response)=>{
+          this.credores = response
+        }
+      })
+      this.service.getAll(this.query)
     },
   },
   mounted() {
-    this.listarCredores();
+    this.getAllCreditors()
+  },
+  computed:{
+    service(): CreditorService{
+      return new CreditorService()
+    }
   },
   name: "listarCredores",
 };

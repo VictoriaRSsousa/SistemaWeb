@@ -1,6 +1,17 @@
-<script setup lang="ts"></script>
-
 <template>
-
-  <RouterView/> 
+  <main>
+    <Toast/>
+    <RouterView />
+  </main>
 </template>
+<script lang="ts">
+
+import { RouterView } from 'vue-router';
+
+export default {
+    components: {
+        RouterView
+
+}
+}
+</script>
