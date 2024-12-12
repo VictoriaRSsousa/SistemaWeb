@@ -1,11 +1,13 @@
 <template>
   <div id="listarCredoresPage" >
-    <header class="header">
-      <h1>Listar Credores</h1>
-      <RouterLink to="/" class="navButton">
-        <i class="fas fa-home"></i>
-        <span>Voltar</span>
+    <header class="w-full p-5 bg-[#3498db] flex  text-white text-center shadow-md">
+      <RouterLink
+        to="/"
+        class=" flex  items-center justify-center h-10  transition transform hover:-translate-y-1  active:translate-y-0"
+      >
+        <i class="fas fa-home text-2xl mr-2"></i>
       </RouterLink>
+      <h1 class="text-2xl font-semibold mx-auto">Listar Credores</h1>
     </header>
 
     <div id="listarCredoresContent" class="px-3">

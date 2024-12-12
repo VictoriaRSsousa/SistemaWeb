@@ -1,14 +1,13 @@
 <template>
   <div id="listarContasPage">
-    <header class="w-full p-5 bg-[#3498db] text-white text-center shadow-md">
-      <h1 class="text-2xl font-semibold">Listar Contas</h1>
+    <header class="w-full p-5 bg-[#3498db] flex  text-white text-center shadow-md">
       <RouterLink
         to="/"
-        class="w-[15vw] flex items-center justify-center h-10 px-5 bg-white text-gray-800 rounded-md transition transform hover:-translate-y-1 shadow-md hover:shadow-lg active:translate-y-0"
+        class=" flex  items-center justify-center h-10  transition transform hover:-translate-y-1  active:translate-y-0"
       >
         <i class="fas fa-home text-2xl mr-2"></i>
-        <span>Voltar</span>
       </RouterLink>
+      <h1 class="text-2xl font-semibold mx-auto">Listar Contas</h1>
     </header>
 
     <div id="listarContasContent" class="m-4">
@@ -22,6 +21,7 @@
               v-model="query.cnpj"
               type="text"
               id="cnpjCredor"
+              @keyup.enter="getAllAccounts"
               class="filter-input p-2 border border-gray-300 rounded-md text-base"
             />
           </div>
@@ -32,6 +32,7 @@
             <select
               v-model="query.status"
               id="status"
+              @change="getAllAccounts"
               class="filter-input p-2 border border-gray-300 rounded-md text-base"
             >
               <option value="">Todos</option>
@@ -68,37 +69,31 @@
               class="filter-input p-2 border border-gray-300 rounded-md text-base"
             />
           </div>
-          <button
-            @click="getAllAccounts()"
-            class="rounded-md my-auto bg-[#2980b9] text-white px-3 h-12"
-          >
-            Pesquisar
-          </button>
-          <button
-            @click="cleanFilter()"
-            class="rounded-md my-auto border border-[#2980b9] text-[#2980b9] px-2 h-12"
-          >
-            Limpar filtro
-          </button>
+          <div class="flex gap-2">
+
+            <!-- <button
+              @click="getAllAccounts()"
+              class="rounded-md my-auto bg-[#2980b9] text-white px-2 h-10"
+            >
+              Pesquisar
+            </button> -->
+            <button
+              @click="cleanFilter()"
+              class="rounded-md my-auto border border-[#2980b9] text-[#2980b9] px-2 h-10"
+            >
+              Limpar filtro
+            </button>
+          </div>
         </div>
       </div>
 
       <div v-for="(account, i) in accounts" :key="i" class="">
-        <!-- <RouterLink :to="`/detalhesConta/${account.id}`" class="link-conta">
-          <div class="conta-info p-4 mb-2 rounded-md shadow-md">
-            <p class="my-1"><strong>CNPJ:</strong> {{ account.cnpj }}</p>
-            <p class="my-1"><strong>Descrição:</strong> {{ account.descricao }}</p>
-            <p class="my-1"><strong>Valor:</strong> R$ {{ formatValor(account.valor) }}</p>
-            <p class="my-1"><strong>Vencimento:</strong> {{ formatDate(String(account.data_vencimento)) }}</p>
-            <p class="my-1"><strong>Status:</strong> {{ account.status }}</p>
-          </div>
-        </RouterLink> -->
+        <div
+          class="w-[70vw] mx-auto bg-white border border-gray-300 rounded-lg shadow-lg p-6 space-y-4 mb-3"
+        >
         <RouterLink
           :to="`/detalhesConta/${account.id}`"
           class="link-conta"
-        >
-        <div
-          class="w-[70vw] mx-auto bg-white border border-gray-300 rounded-lg shadow-lg p-6 space-y-4 mb-3"
         >
           <div class="flex justify-between items-center">
             <h3 class="text-lg font-semibold text-gray-700">
@@ -120,8 +115,8 @@
               {{ formatDate(account.data_vencimento) }}
             </p>
           </div>
-        </div>
       </RouterLink>
+        </div>
       </div>
     </div>
   </div>

@@ -1,31 +1,33 @@
 <template>
-  <div id="aboutPage">
-    <header id="headerPage" class="text-xl">
-      <h1 class="text-3xl font-bold">Sobre</h1>
+  <div id="aboutPage" class="flex flex-col items-center">
+    <header id="headerPage" class="w-full flex justify-between items-center p-5 bg-[#2980b9] text-white">
       <nav>
-        <RouterLink to="/" >Voltar</RouterLink>
+        <RouterLink to="/" class="text-white font-bold hover:underline">
+          <i class="fas fa-home text-2xl mr-2"></i>
+          </RouterLink>
       </nav>
+      <h1 class="text-3xl font-bold mx-auto">Sobre</h1>
     </header>
 
-    <main id="mainContent">
-      <h2>Equipe de Desenvolvimento</h2>
+    <main id="mainContent" class="max-w-2xl w-full mt-5 p-5 bg-[#f4f4f4] rounded-lg shadow-lg">
+      <h2 class="text-center mb-4 text-2xl font-bold uppercase text-black">Equipe de Desenvolvimento</h2>
 
-      <ul class="team-list">
-        <li>
-          <strong>Samuel Bastos da Silva</strong><br>
-          <a href="mailto:samuel.bastos.silva02@aluno.ifce.edu.br">samuel.bastos.silva02@aluno.ifce.edu.br</a>
+      <ul class="list-none p-0">
+        <li class="mb-4 text-lg">
+          <strong class="text-[#2980b9]">Samuel Bastos da Silva</strong><br>
+          <a href="mailto:samuel.bastos.silva02@aluno.ifce.edu.br" class="text-[#333] hover:underline">samuel.bastos.silva02@aluno.ifce.edu.br</a>
         </li>
-        <li>
-          <strong>Luiz Kayo Souza Soares</strong><br>
-          <a href="mailto:luiz.kayo.souza02@aluno.ifce.edu.br">luiz.kayo.souza02@aluno.ifce.edu.br</a>
+        <li class="mb-4 text-lg">
+          <strong class="text-[#2980b9]">Luiz Kayo Souza Soares</strong><br>
+          <a href="mailto:luiz.kayo.souza02@aluno.ifce.edu.br" class="text-[#333] hover:underline">luiz.kayo.souza02@aluno.ifce.edu.br</a>
         </li>
-        <li>
-          <strong>Victoria Regia Sales Sousa</strong><br>
-          <a href="mailto:victoria.regia08@aluno.ifce.edu.br">victoria.regia08@aluno.ifce.edu.br</a>
+        <li class="mb-4 text-lg">
+          <strong class="text-[#2980b9]">Victoria Regia Sales Sousa</strong><br>
+          <a href="mailto:victoria.regia08@aluno.ifce.edu.br" class="text-[#333] hover:underline">victoria.regia08@aluno.ifce.edu.br</a>
         </li>
       </ul>
 
-      <div id="content">
+      <div id="content" class="mt-5 text-base leading-6 text-black">
         Software desenvolvido durante aulas de "SISTEMAS WEB" da cadeira de Telemática do 5º semestre do Instituto Federal do Ceará. Criado com auxílio dos professores Antonio de Barros Serra e Rondinelli Moura. Foi desenvolvido utilizando Python com Flask e, para o front-end, Vue.js.
       </div>
     </main>
@@ -37,76 +39,5 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Sobre',
-
 });
 </script>
-
-<style scoped>
-#headerPage {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  background-color: #2980b9;
-  color: white;
-}
-
-#headerPage nav a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-#headerPage nav a:hover {
-  text-decoration: underline;
-}
-
-#mainContent {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #f4f4f4;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-  text-align: center; 
-  margin-bottom: 10px; 
-  color: #000000; 
-  font-weight: bold; 
-  font-size: 2rem; 
-  text-transform: uppercase; 
-  border-radius: 5px; 
-}
-
-.team-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.team-list li {
-  margin-bottom: 15px;
-  font-size: 18px;
-}
-
-.team-list li strong {
-  color: #2980b9;
-}
-
-.team-list li a {
-  color: #333;
-  text-decoration: none;
-}
-
-.team-list li a:hover {
-  text-decoration: underline;
-}
-
-#content {
-  margin-top: 20px;
-  font-size: 16px;
-  line-height: 1.6;
-  color: #000000;
-}
-</style>

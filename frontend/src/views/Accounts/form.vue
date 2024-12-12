@@ -179,10 +179,6 @@ export default {
         this.account.data_pagamento as string
       );
       this.account.cnpj = this.account.credor.cnpj
-      // // if (this.account.data_pagamento === "") {
-      // //   this.account.data_pagamento = undefined;
-      // // }
-      //  console.log(this.account);
       
 
       this.service.account.pipe(take(1)).subscribe({
